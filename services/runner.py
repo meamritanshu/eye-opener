@@ -6,7 +6,7 @@ from services.state import AgentState, initial_state
 
 
 def _to_sse(payload: dict[str, object]) -> str:
-    return f"data: {json.dumps(payload)}\\n\\n"
+    return f"data: {json.dumps(payload)}\n\n"
 
 
 def run_pipeline(raw_input: str) -> Generator[str, None, None]:
@@ -47,23 +47,31 @@ def run_pipeline(raw_input: str) -> Generator[str, None, None]:
 
 def stream_pipeline(raw_input: str) -> Generator[dict[str, object], None, None]:
     final_state = initial_state(raw_input)
-    for event in graph.stream(final_state):
-        if not event:
-            continue
-        node_name = list(event.keys())[0]
-        node_state = event[node_name]
-        final_state = node_state
-        yield {
-            "active_agent": node_state.get("active_agent", node_name),
-            "event_type": "step",
-            "state": node_state,
-        }
+    try:
+        for event in graph.stream(final_state):
+            if not event:
+                continue
+            node_name = list(event.keys())[0]
+            node_state = event[node_name]
+            final_state = node_state
+            yield {
+                "active_agent": node_state.get("active_agent", node_name),
+                "event_type": "step",
+                "state": node_state,
+            }
 
-    yield {
-        "active_agent": final_state.get("active_agent", "architect"),
-        "event_type": "complete",
-        "state": final_state,
-    }
+        yield {
+            "active_agent": final_state.get("active_agent", "architect"),
+            "event_type": "complete",
+            "state": final_state,
+        }
+    except Exception as exc:
+        yield {
+            "active_agent": "error_handler",
+            "event_type": "error",
+            "message": str(exc),
+            "state": final_state,
+        }
 
 
 def run_pipeline_once(raw_input: str) -> AgentState:

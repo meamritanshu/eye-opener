@@ -8,6 +8,8 @@ chromadb
 langchain-community
 youtube-transcript-api
 beautifulsoup4
+sentence-transformers
+langchain-huggingface
 ddgs
 requests
 python-dotenv

@@ -77,8 +77,11 @@ def stream() -> Response:
         raw_input = request.args.get("input", "").strip()
 
         def event_stream():
-            for payload in stream_pipeline(raw_input):
-                yield f"data: {json.dumps(payload)}\n\n"
+            try:
+                for payload in stream_pipeline(raw_input):
+                    yield f"data: {json.dumps(payload)}\n\n"
+            except Exception as exc:
+                yield f"data: {json.dumps({'event_type': 'error', 'message': str(exc)})}\n\n"
 
         return Response(event_stream(), mimetype="text/event-stream")
     except Exception as exc:

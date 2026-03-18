@@ -1,23 +1,27 @@
 # 👁 The Eye Opener
 
-AI-powered political fact-checking for India — built with LangGraph, ChromaDB, and D3.js
+AI-powered political fact-checking for India — built with LangGraph and ChromaDB.
 
 ![Python](https://img.shields.io/badge/Python-3.11-blue) ![Flask](https://img.shields.io/badge/Flask-3.x-lightgrey) ![LangGraph](https://img.shields.io/badge/LangGraph-latest-purple)
-![ChromaDB](https://img.shields.io/badge/ChromaDB-RAG-teal) ![D3.js](https://img.shields.io/badge/D3.js-v7-orange) ![License](https://img.shields.io/badge/License-MIT-green)
+![ChromaDB](https://img.shields.io/badge/ChromaDB-RAG-teal) ![CSS](https://img.shields.io/badge/CSS-Animations-orange) ![License](https://img.shields.io/badge/License-MIT-green)
 ![Status](https://img.shields.io/badge/Status-Active_Development-yellow)
 
 ## What it does
 
 | 🔍 Input | ⚙️ Pipeline | 📊 Output |
 | --- | --- | --- |
-| Plain text claim or YouTube URL | 5-agent LangGraph chain | Truth score 1–100 + per-claim verdicts |
+| Plain text claim or YouTube URL | Architect Orchestrator + 4 Workers | Truth score 1–100 + per-claim verdicts |
 
 ## Architecture
 
+* **Worker agents:** 4 (`Surgeon`, `Diver`, `Skeptic`, `Scorer`)
+* **Pipeline stages:** 5 (Preprocessor + 4 Workers)
+* **Orchestration:** 1 `Architect` governing the LangGraph execution flow
+
 ```text
-Input -> [Preprocessor] -> [Surgeon] -> [Diver] -> [Skeptic] -> [Scorer] -> Results
-										 ^
-							 ChromaDB RAG + DuckDuckGo Live Search
+Input -> [Architect] -> [Preprocessor] -> [Surgeon] -> [Diver] -> [Skeptic] -> [Scorer] -> Results
+                                                           ^
+                                              ChromaDB RAG + DuckDuckGo Live Search
 ```
 
 ## Tech stack
@@ -32,7 +36,7 @@ Input -> [Preprocessor] -> [Surgeon] -> [Diver] -> [Skeptic] -> [Scorer] -> Resu
 | Vector DB | ChromaDB |
 | Embeddings | sentence-transformers/all-MiniLM-L6-v2 |
 | Frontend | HTML + CSS + Vanilla JavaScript |
-| Visualization | D3.js v7 |
+| Visualization | Native HTML/CSS Linear Flowchart Animations |
 
 ## Quick start
 
@@ -89,7 +93,7 @@ python app.py
 8. Open the browser.
 
 ```bash
-http://localhost:5000/
+http://localhost:5001/
 ```
 
 ## Agent pipeline
@@ -108,15 +112,12 @@ http://localhost:5000/
 - End-to-end SSE pipeline with ordered agent progression.
 - Hybrid retrieval path tracking (`rag`, `live_search`, `hybrid`).
 - Frontend SSE client and live status updates.
-- D3 truth graph rendering with active-node highlighting.
-- Results panel rendering for score, retrieval method, and verdicts.
+- Custom CSS visual flowchart rendering with active node tooltips.
+- Graceful error handling for missing API keys and empty ChromaDB.
+- Detailed UI panels for "Sources Used" and "Score Explanation".
 
 ### 🔧 In Progress
-- Fixing 429 rate-limit handling so runs do not degrade to `truth_score = 0`.
-- Improving scorer reliability to avoid blanket `Unverifiable (0%)` outcomes.
 - Hardening indexer source access (PIB 403 headers; BoomLive/VishvasNews selectors).
-- Verifying and fixing empty-input SSE behavior (`event_type: error` vs `complete`).
-- Stabilizing retrieval/evidence quality under load.
 
 ## Team
 

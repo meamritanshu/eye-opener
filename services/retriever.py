@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import chromadb
-from duckduckgo_search import DDGS
+from ddgs import DDGS
 from langchain_community.embeddings import HuggingFaceEmbeddings
 
 import config
@@ -60,14 +60,14 @@ def live_search(query: str, sources: list[str]) -> list[dict]:
     results: list[dict] = []
     seen_urls: set[str] = set()
 
-    with DDGS() as ddgs:
-        for source in sources:
-            scoped_query = f"{query} site:{source}"
+    ddgs = DDGS()
+    for source in sources:
+        scoped_query = f"{query} site:{source}"
+        try:
             for row in ddgs.text(scoped_query, region="in-en", max_results=5):
                 url = str(row.get("href", "")).strip()
                 if not url or url in seen_urls:
                     continue
-
                 seen_urls.add(url)
                 results.append(
                     {
@@ -75,14 +75,23 @@ def live_search(query: str, sources: list[str]) -> list[dict]:
                         "body": str(row.get("body", "")).strip(),
                         "url": url,
                         "source": source,
+                        "text": str(row.get("body", "")).strip(),
                     }
                 )
+        except Exception:
+            continue
 
     return results
 
 
 def hybrid_search(query: str) -> tuple[list[dict], str]:
-    rag_results, confidence = rag_search(query)
+    rag_results: list[dict] = []
+    confidence: float = 0.0
+    try:
+        rag_results, confidence = rag_search(query)
+    except Exception:
+        pass  # ChromaDB may be empty or not yet indexed — fall back to live search
+
     if rag_results and confidence >= 0.75:
         return rag_results, "rag"
 
