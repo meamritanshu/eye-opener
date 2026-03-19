@@ -7,11 +7,11 @@
 - SSE pipeline runs end-to-end for non-empty claims through: `preprocessor -> surgeon -> diver -> skeptic -> scorer`.
 - `retrieval_method` is populated in final output.
 - Frontend wiring is in place:
-  - `static/index.html` loads the graph script and main UI script in the correct order.
-  - Claim submit triggers SSE stream and updates active stage text and status.
+  - `static/index.html` loads the main UI script.
+  - Claim submit triggers SSE stream and populates the Live Agent Observer console progressively.
   - Results panel populates on completion.
-- The workflow graph renders in `#graph-container` with the current node set visible at load.
-- Graph node highlighting works visually during SSE.
+- The workflow graph renders as a Hub-and-Spoke orchestrator layout, replacing the old D3 graph.
+- Local SQLite query caching ensures identical queries execute instantly and bypass all cloud LLMs.
 
 ### Partially working
 - Full visual sequence from graph node classes is mostly confirmed, but `preprocessor` highlight is fast and not always captured in screenshots.

@@ -22,6 +22,10 @@
 - Architect orchestrator exists and is used to wire and execute the graph.
 - Error handler node exists for terminal failures.
 
+## Caching Layer
+- An exact-match query cache is implemented using a local SQLite database (`services/cache.py`).
+- The `runner` intercepts pipeline execution and returns cached `AgentState` payloads immediately if available.
+
 ## Counting guide
 - Worker agents = 4
 - Main pipeline stages = 5

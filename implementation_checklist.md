@@ -90,16 +90,16 @@ Note: status updates below are based on repository code inspection, not full run
 - [x] Novel claims trigger fallback successfully.
 - [x] Dual-channel failure sets clear `error` and exits safely.
 
-## Phase 4 - Frontend Dashboard and D3 Live Graph
+## Phase 4 - Frontend Dashboard and Interactive Features
 
 ### Scope
-- [x] Implement user input UI, SSE client, results rendering, and graph animations.
+- [x] Implement user input UI, SSE client, results rendering, and the Live Agent Observer console.
 
 ### Deliverables
 - [x] `static/index.html`
 - [x] `static/css/style.css`
 - [x] `static/js/main.js`
-- [x] `static/js/truth-graph.js`
+- [x] (Deleted) Legacy `static/js/truth-graph.js`
 
 ### Implementation checks
 - [x] Accept a single input box for text claims and YouTube URLs.
@@ -178,6 +178,9 @@ Note: status updates below are based on repository code inspection, not full run
 - [x] Migrated embeddings to local `OllamaEmbeddings` (`nomic-embed-text`) in indexer and retriever.
 - [x] Added scorer parsing safety fallback: if verdicts exist but computed score is 0, derive from average confidence.
 - [x] Added `_safe_model_text` stripping of DeepSeek `<think>...</think>` blocks.
+- [x] Added explicit SQLite Answer Caching to save tokens and prevent repeat queries (`services/cache.py`).
+- [x] Centralized CSS Hub-and-Spoke Orchestrator flow diagram, superseding old D3 graph.
+- [x] Built Live Agent Observer terminal to stream active analytical events progressively.
 
 ## Milestone sequence tracker
 - [x] Milestone 1: Bootstrap repo and run health check.

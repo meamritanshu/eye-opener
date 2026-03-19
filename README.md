@@ -1,6 +1,6 @@
 # The Eye Opener
 
-AI-powered political claim verification for India, built with Flask, LangGraph, ChromaDB, and D3.
+AI-powered political claim verification for India, built with Flask, LangGraph, ChromaDB, and SQLite.
 
 Current runtime profile:
 - Local-first inference through Ollama when it is enabled and reachable
@@ -58,10 +58,11 @@ Embeddings:
 
 Data:
 - ChromaDB persistent local vector store
+- SQLite local exact-match caching layer (`local_cache.db`) for bypassing LLMs on repeated queries
 
 Frontend:
 - HTML, CSS, vanilla JavaScript
-- D3 workflow graph, flow timeline, result panels, and settings drawer
+- Hub-and-Spoke orchestrator workflow tree, Live Agent Observer console, result panels, and settings drawer
 
 ## Quick start
 
@@ -116,6 +117,8 @@ Implemented:
 - Expanded source catalog with category metadata
 - Source skip controls with explicit skip reasons
 - Legal and PIB live retrieval enrichments
+- SQLite robust exact-match query caching to prevent rate-limiting on dupe queries
+- Hub-and-Spoke semantic UI and streaming Observer console (replacing bloated D3 graph)
 - Scorer hardening for DeepSeek think-block stripping and zero-score fallback
 - Settings and Ollama model endpoints in the Flask app
 
@@ -141,12 +144,12 @@ Core backend:
 - services/indexer.py
 - services/state.py
 - services/llm.py
+- services/cache.py
 
 Frontend:
 - static/index.html
 - static/css/style.css
 - static/js/main.js
-- static/js/truth-graph.js
 
 Docs:
 - docs/architecture.md

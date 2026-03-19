@@ -14,7 +14,8 @@ You are assisting in building "The Eye Opener", an AI-powered fact-checking plat
 - **RAG**: ChromaDB, OllamaEmbeddings with `nomic-embed-text`
 - **Retrieval**: DuckDuckGo search, BeautifulSoup4, requests
 - **Input handling**: youtube-transcript-api
-- **Frontend**: Vanilla JS, D3 workflow graph, SSE (Server-Sent Events)
+- **Frontend**: Vanilla JS, Hub-and-Spoke semantic UI, Live Agent Observer, SSE
+- **Caching**: Local SQLite exact-match caching layer
 - **Config**: python-dotenv
 
 ## Project folder structure
@@ -39,8 +40,7 @@ eye-opener/
     ├── index.html
     ├── css/style.css
     └── js/
-        ├── main.js             # SSE listener, UI interactions
-        └── truth-graph.js      # D3 workflow graph
+        └── main.js             # SSE listener, Hub-and-Spoke Observer UI
 ```
 
 ## AgentState shape (always import from services/state.py)

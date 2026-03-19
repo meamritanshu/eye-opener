@@ -87,16 +87,15 @@ Build The Eye Opener as an AI-powered fact-checking platform for Indian politica
 - Novel claims trigger fallback successfully.
 - Dual-channel failure sets clear `error` and exits safely.
 
-## Phase 4 - Frontend Dashboard and D3 Live Graph
+## Phase 4 - Frontend Dashboard and Observer UI
 
 ### Scope
-- Implement user input UI, SSE client, results rendering, and graph animations.
+- Implement user input UI, SSE client, results rendering, and Hub-and-Spoke diagram.
 
 ### Deliverables
 - `static/index.html`
 - `static/css/style.css`
 - `static/js/main.js`
-- `static/js/truth-graph.js`
 
 ### Implementation Notes
 - Include a single input area that accepts text claims or YouTube URLs.
