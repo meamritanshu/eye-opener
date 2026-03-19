@@ -35,6 +35,71 @@
   }
 
   let eventSource = null;
+  const liveOutputContent = document.getElementById("live-output-content");
+  const livePulse = document.getElementById("live-pulse");
+  const liveContainer = document.getElementById("live-output-container");
+  
+  let processedItems = {
+    claims: 0,
+    logs: 0,
+    critiques: 0,
+    verdicts: 0
+  };
+  let currentLogAgent = null;
+
+  function appendLiveLog(htmlContent) {
+    if (!liveOutputContent) return;
+    const entry = document.createElement("div");
+    entry.className = "live-log-entry";
+    entry.innerHTML = htmlContent;
+    liveOutputContent.appendChild(entry);
+    liveOutputContent.scrollTop = liveOutputContent.scrollHeight;
+  }
+
+  function updateLiveOutput(agent, state) {
+    if (!liveOutputContent || !state) return;
+
+    if (agent !== currentLogAgent) {
+      const hint = liveOutputContent.querySelector(".hint");
+      if (hint) hint.remove();
+
+      currentLogAgent = agent;
+      appendLiveLog(`<span class="live-log-strong">[System]</span> Switching to ${labelForStage(agent)} phase...`);
+    }
+
+    if (agent === "surgeon" && state.claims && state.claims.length > processedItems.claims) {
+      const newItems = state.claims.slice(processedItems.claims);
+      processedItems.claims = state.claims.length;
+      newItems.forEach(c => appendLiveLog(`<span class="live-log-strong">↳ Extracted claim:</span> <div class="live-log-quote">${c}</div>`));
+    }
+
+    if (agent === "diver" && state.research_logs && state.research_logs.length > processedItems.logs) {
+      const newItems = state.research_logs.slice(processedItems.logs);
+      processedItems.logs = state.research_logs.length;
+      newItems.forEach(log => {
+        appendLiveLog(`<span class="live-log-strong">↳ Searched:</span> "${log.query}" <small>(${log.sources?.length || 0} sources found)</small>`);
+      });
+    }
+
+    if (agent === "skeptic" && state.critiques && state.critiques.length > processedItems.critiques) {
+      const newItems = state.critiques.slice(processedItems.critiques);
+      processedItems.critiques = state.critiques.length;
+      newItems.forEach(crit => {
+        const preview = crit.length > 120 ? crit.substring(0, 120) + "..." : crit;
+        appendLiveLog(`<span class="live-log-strong">↳ Critique insight:</span> <div class="live-log-quote">${preview}</div>`);
+      });
+    }
+
+    if (agent === "scorer" && state.verdicts && state.verdicts.length > processedItems.verdicts) {
+      const newItems = state.verdicts.slice(processedItems.verdicts);
+      processedItems.verdicts = state.verdicts.length;
+      newItems.forEach(v => {
+        const vText = (v.verdict || "UNKNOWN").toUpperCase();
+        const badgeColor = vText.includes("TRUE") ? "#22c55e" : (vText.includes("FALSE") ? "#ef4444" : "#eab308");
+        appendLiveLog(`<span class="live-log-strong">↳ Final Verdict:</span> <span style="color: ${badgeColor}; font-weight: 800; letter-spacing: 0.05em;">[${vText}]</span>`);
+      });
+    }
+  }
 
   const activeAgentEl = document.createElement("p");
   activeAgentEl.className = "hint";
@@ -92,9 +157,6 @@
     const stageLabel = labelForStage(activeAgent);
     activeAgentEl.textContent = `Active stage: ${stageLabel}`;
     setStatus(`Running: ${stageLabel}`);
-
-    // Activate D3 truth graph node (if loaded)
-    window.truthGraph?.activateNode(activeAgent);
 
     // Activate flow-node UI
     document.querySelectorAll(".flow-node, .flow-path").forEach((el) => {
@@ -242,11 +304,14 @@
 
     if (activeAgent) {
       updateActiveAgent(activeAgent);
+      updateLiveOutput(activeAgent, state);
     }
 
     if (state?.error) {
       showInlineError(`Pipeline error: ${state.error}`);
       setStatus("Error");
+      if (livePulse) livePulse.classList.remove("active");
+      appendLiveLog(`<span style="color: #ef4444; font-weight: bold;">[Error]</span> ${state.error}`);
       setLoadingState(false);
       closeStream();
       return;
@@ -255,6 +320,8 @@
     if (eventType === "error" && payload?.message) {
       showInlineError(`Pipeline error: ${payload.message}`);
       setStatus("Error");
+      if (livePulse) livePulse.classList.remove("active");
+      appendLiveLog(`<span style="color: #ef4444; font-weight: bold;">[Error]</span> ${payload.message}`);
       setLoadingState(false);
       closeStream();
       return;
@@ -265,6 +332,8 @@
         el.classList.remove("active");
       });
       activeAgentEl.textContent = "Pipeline complete";
+      if (livePulse) livePulse.classList.remove("active");
+      appendLiveLog(`<span style="color: #2dd4a0; font-weight: bold;">[System]</span> Pipeline complete.`);
       renderCompleteState(state);
       setStatus("Complete");
       setLoadingState(false);
@@ -294,6 +363,14 @@
     if (explanationPanel) {
       explanationPanel.hidden = true;
     }
+
+    if (liveContainer) liveContainer.hidden = false;
+    if (livePulse) livePulse.classList.add("active");
+    if (liveOutputContent) {
+      liveOutputContent.innerHTML = '<div class="live-log-entry hint">Initializing pipeline...</div>';
+    }
+    processedItems = { claims: 0, logs: 0, critiques: 0, verdicts: 0 };
+    currentLogAgent = null;
 
     const url = `/api/stream?input=${encodeURIComponent(claim)}`;
     eventSource = new EventSource(url);

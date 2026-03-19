@@ -179,110 +179,127 @@
       <section class="panel stream-panel" aria-labelledby="stream-label">
         <h2 id="stream-label">Pipeline Stream</h2>
         <div class="flow-container">
-          <div class="flow-linear">
+          <div class="flow-orchestrator">
             
-            <!-- Claim -->
-            <div class="flow-node" id="node-claim">
-              <div class="node-icon">01</div>
-              <div class="node-content">
-                <h4>Claim</h4>
-                <span>Input text</span>
+            <!-- Tier 1: Claim -->
+            <div class="flow-tier">
+              <div class="flow-node" id="node-claim">
+                <div class="node-icon">01</div>
+                <div class="node-content">
+                  <h4>Claim</h4>
+                  <span>Input text</span>
+                </div>
+                <div class="active-note">Receiving input...</div>
               </div>
-              <div class="active-note">Receiving input...</div>
             </div>
 
-            <div class="flow-path path-horiz"></div>
+            <!-- Arrow Down -->
+            <div class="flow-edge-down">⬇</div>
 
-            <!-- Architect -->
-            <div class="flow-node node-architect" id="node-architect">
-              <div class="node-icon">02</div>
-              <div class="node-content">
-                <h4>Architect</h4>
-                <span>Orchestrator</span>
+            <!-- Tier 2: Architect -->
+            <div class="flow-tier">
+              <div class="flow-node node-architect" id="node-architect">
+                <div class="node-icon">02</div>
+                <div class="node-content">
+                  <h4>Architect</h4>
+                  <span>Orchestrator</span>
+                </div>
+                <div class="active-note">Planning workflow...</div>
               </div>
-              <div class="active-note">Planning workflow...</div>
             </div>
 
-            <div class="flow-path path-horiz"></div>
+            <!-- Arrow Down to Workers -->
+            <div class="flow-edge-down">⬇</div>
 
-            <!-- Preprocessor -->
-            <div class="flow-node" id="node-preprocessor">
-              <div class="node-icon">03</div>
-              <div class="node-content">
-                <h4>Preprocessor</h4>
-                <span>Cleans text</span>
+            <!-- Tier 3: Workers Wrap -->
+            <div class="flow-workers-tier">
+              
+              <div class="worker-wrapper">
+                <div class="flow-edge-two-way">↕</div>
+                <div class="flow-node" id="node-preprocessor">
+                  <div class="node-icon">03</div>
+                  <div class="node-content">
+                    <h4>Preprocessor</h4>
+                    <span>Cleans text</span>
+                  </div>
+                  <div class="active-note">Sanitizing input...</div>
+                </div>
               </div>
-              <div class="active-note">Sanitizing input...</div>
-            </div>
-            
-            <div class="flow-path path-horiz"></div>
-            
-            <!-- Surgeon -->
-            <div class="flow-node" id="node-surgeon">
-              <div class="node-icon">04</div>
-              <div class="node-content">
-                <h4>Surgeon</h4>
-                <span>Extracts claims</span>
+
+              <div class="worker-wrapper">
+                <div class="flow-edge-two-way">↕</div>
+                <div class="flow-node" id="node-surgeon">
+                  <div class="node-icon">04</div>
+                  <div class="node-content">
+                    <h4>Surgeon</h4>
+                    <span>Extracts claims</span>
+                  </div>
+                  <div class="active-note">Extracting facts...</div>
+                </div>
               </div>
-              <div class="active-note">Extracting facts...</div>
-            </div>
 
-            <div class="flow-path path-horiz"></div>
-
-            <!-- Diver -->
-            <div class="flow-node" id="node-diver">
-              <div class="node-icon">05</div>
-              <div class="node-content">
-                <h4>Diver</h4>
-                <span>Retrieval</span>
+              <div class="worker-wrapper">
+                <div class="flow-edge-two-way">↕</div>
+                <div class="flow-node" id="node-diver">
+                  <div class="node-icon">05</div>
+                  <div class="node-content">
+                    <h4>Diver</h4>
+                    <span>Retrieval</span>
+                  </div>
+                  <div class="active-note">Searching web/DB...</div>
+                </div>
               </div>
-              <div class="active-note">Searching web/DB...</div>
-            </div>
 
-            <div class="flow-path path-horiz"></div>
-
-            <!-- Skeptic -->
-            <div class="flow-node" id="node-skeptic">
-              <div class="node-icon">06</div>
-              <div class="node-content">
-                <h4>Skeptic</h4>
-                <span>Critique</span>
+              <div class="worker-wrapper">
+                <div class="flow-edge-two-way">↕</div>
+                <div class="flow-node" id="node-skeptic">
+                  <div class="node-icon">06</div>
+                  <div class="node-content">
+                    <h4>Skeptic</h4>
+                    <span>Critique</span>
+                  </div>
+                  <div class="active-note">Cross-referencing...</div>
+                </div>
               </div>
-              <div class="active-note">Cross-referencing...</div>
-            </div>
 
-            <div class="flow-path path-horiz"></div>
-
-            <!-- Scorer -->
-            <div class="flow-node node-final" id="node-scorer">
-              <div class="node-icon">07</div>
-              <div class="node-content">
-                <h4>Scorer</h4>
-                <span>Verdict</span>
+              <div class="worker-wrapper">
+                <div class="flow-edge-two-way">↕</div>
+                <div class="flow-node node-final" id="node-scorer">
+                  <div class="node-icon">07</div>
+                  <div class="node-content">
+                    <h4>Scorer</h4>
+                    <span>Verdict</span>
+                  </div>
+                  <div class="active-note">Calculating score...</div>
+                </div>
               </div>
-              <div class="active-note">Calculating score...</div>
-            </div>
 
-            <!-- Error node -->
-            <div class="flow-node node-error" id="node-error" hidden>
-              <div class="node-icon">!</div>
-              <div class="node-content">
-                <h4>Error</h4>
-                <span>Failed</span>
+              <div class="worker-wrapper">
+                <div class="flow-edge-down error-edge">⬇</div>
+                <div class="flow-node node-error" id="node-error" hidden>
+                  <div class="node-icon">!</div>
+                  <div class="node-content">
+                    <h4>Error</h4>
+                    <span>Failed</span>
+                  </div>
+                  <div class="active-note">Pipeline encountered an error.</div>
+                </div>
               </div>
-              <div class="active-note">Pipeline encountered an error.</div>
-            </div>
 
+            </div>
           </div>
         </div>
         <p class="hint status-hint">Waiting for input...</p>
 
-        <!-- D3 Truth Graph -->
-        <div id="graph-container" style="width:100%;min-height:420px;"></div>
-        <div class="graph-legend" aria-label="Graph legend">
-          <span><i class="dot dot-worker" aria-hidden="true"></i> Worker stage</span>
-          <span><i class="dot dot-orchestrator" aria-hidden="true"></i> Orchestrator</span>
-          <span><i class="dot dot-error" aria-hidden="true"></i> Error terminal</span>
+        <!-- Live Agent Observer -->
+        <div class="live-output-container" id="live-output-container" hidden>
+          <div class="live-output-header">
+            <span class="live-output-title">Agent Observer</span>
+            <span class="live-pulse" id="live-pulse"></span>
+          </div>
+          <div class="live-output-content" id="live-output-content">
+            <div class="live-log-entry hint">Awaiting pipeline start...</div>
+          </div>
         </div>
       </section>
 
@@ -316,8 +333,7 @@
         <div class="explanation-list" id="explanation-list"></div>
       </section>
     </main>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
-    <script src="/static/js/truth-graph.js"></script>
+
     <script src="/static/js/main.js"></script>
     <script src="/static/js/settings.js"></script>
   </body>

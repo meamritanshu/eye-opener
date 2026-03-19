@@ -10,8 +10,19 @@ def _to_sse(payload: dict[str, object]) -> str:
 
 
 def run_pipeline(raw_input: str) -> Generator[str, None, None]:
+    from services.cache import get_cached_state, set_cached_state
+
     state = initial_state(raw_input)
     final_state: AgentState = state
+
+    cached_state = get_cached_state(raw_input)
+    if cached_state:
+        yield _to_sse({
+            "active_agent": cached_state.get("active_agent", "architect"),
+            "event_type": "complete",
+            "state": cached_state,
+        })
+        return
 
     try:
         for event in graph.stream(state):
@@ -27,6 +38,9 @@ def run_pipeline(raw_input: str) -> Generator[str, None, None]:
                 "state_snapshot": node_state,
             }
             yield _to_sse(payload)
+
+        if not final_state.get("error"):
+            set_cached_state(raw_input, final_state)
 
         yield _to_sse(
             {
@@ -46,6 +60,17 @@ def run_pipeline(raw_input: str) -> Generator[str, None, None]:
 
 
 def stream_pipeline(raw_input: str) -> Generator[dict[str, object], None, None]:
+    from services.cache import get_cached_state, set_cached_state
+
+    cached_state = get_cached_state(raw_input)
+    if cached_state:
+        yield {
+            "active_agent": cached_state.get("active_agent", "architect"),
+            "event_type": "complete",
+            "state": cached_state,
+        }
+        return
+
     final_state = initial_state(raw_input)
     try:
         for event in graph.stream(final_state):
@@ -59,6 +84,9 @@ def stream_pipeline(raw_input: str) -> Generator[dict[str, object], None, None]:
                 "event_type": "step",
                 "state": node_state,
             }
+
+        if not final_state.get("error"):
+            set_cached_state(raw_input, final_state)
 
         yield {
             "active_agent": final_state.get("active_agent", "architect"),
