@@ -1,8 +1,4 @@
 {
-  "build": {
-    "builder": "nixpacks",
-    "buildCommand": "pip install -r requirements.txt && playwright install chromium && python -m services.indexer"
-  },
   "deploy": {
     "startCommand": "python app.py",
     "restartPolicyType": "on_failure",
