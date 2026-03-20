@@ -13,3 +13,4 @@ duckduckgo-search
 requests
 python-dotenv
 playwright
+gunicorn

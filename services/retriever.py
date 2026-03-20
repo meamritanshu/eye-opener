@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import chromadb
 from langchain_ollama import OllamaEmbeddings
-from ddgs import DDGS
+from duckduckgo_search import DDGS
 
 import config
 
@@ -79,41 +79,45 @@ def _is_legal_query(query: str) -> bool:
 
 
 def rag_search(query: str, n_results: int = 5) -> tuple[list[dict], float]:
-    collection = _get_collection()
-    embedder = _get_embedder()
+    try:
+        collection = _get_collection()
+        embedder = _get_embedder()
 
-    query_embedding = embedder.embed_query(query)
-    response = collection.query(
-        query_embeddings=[query_embedding],
-        n_results=n_results,
-        include=["documents", "metadatas", "distances"],
-    )
-
-    raw_documents = response.get("documents") or [[]]
-    raw_metadatas = response.get("metadatas") or [[]]
-    raw_distances = response.get("distances") or [[]]
-
-    documents = raw_documents[0] if raw_documents else []
-    metadatas = raw_metadatas[0] if raw_metadatas else []
-    distances = raw_distances[0] if raw_distances else []
-
-    results: list[dict] = []
-    for text, metadata, distance in zip(documents, metadatas, distances):
-        md = metadata or {}
-        results.append(
-            {
-                "text": text,
-                "source": md.get("source_name", "unknown"),
-                "url": md.get("url", ""),
-                "distance": float(distance),
-                "chunk_index": md.get("chunk_index", -1),
-                "source_category": md.get("category", "general"),
-                "type": "rag",
-            }
+        query_embedding = embedder.embed_query(query)
+        response = collection.query(
+            query_embeddings=[query_embedding],
+            n_results=n_results,
+            include=["documents", "metadatas", "distances"],
         )
 
-    top_confidence = _normalize_confidence(float(distances[0])) if distances else 0.0
-    return results, top_confidence
+        raw_documents = response.get("documents") or [[]]
+        raw_metadatas = response.get("metadatas") or [[]]
+        raw_distances = response.get("distances") or [[]]
+
+        documents = raw_documents[0] if raw_documents else []
+        metadatas = raw_metadatas[0] if raw_metadatas else []
+        distances = raw_distances[0] if raw_distances else []
+
+        results: list[dict] = []
+        for text, metadata, distance in zip(documents, metadatas, distances):
+            md = metadata or {}
+            results.append(
+                {
+                    "text": text,
+                    "source": md.get("source_name", "unknown"),
+                    "url": md.get("url", ""),
+                    "distance": float(distance),
+                    "chunk_index": md.get("chunk_index", -1),
+                    "source_category": md.get("category", "general"),
+                    "type": "rag",
+                }
+            )
+
+        top_confidence = _normalize_confidence(float(distances[0])) if distances else 0.0
+        return results, top_confidence
+    except Exception as e:
+        print(f"[RAG] ChromaDB not ready yet, falling back: {e}")
+        return [], 0.0
 
 
 def live_search(query: str, sources: list[str]) -> list[dict]:

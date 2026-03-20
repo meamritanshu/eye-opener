@@ -28,4 +28,4 @@ COPY . .
 EXPOSE 8080
 
 # Start
-CMD ["python", "app.py"]
+CMD ["sh", "-c", "gunicorn --bind 0.0.0.0:${PORT:-8080} app:app"]
