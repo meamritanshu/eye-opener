@@ -65,6 +65,20 @@ def _safe_model_text(response: object) -> str:
     return text
 
 
+def _expand_claim_to_queries(claim: str, llm) -> list[str]:
+    prompt = (
+        "You are a research assistant for Indian political fact-checking.\n"
+        "Given this claim, generate exactly 3 specific search queries to find evidence.\n"
+        "Return only the 3 queries, one per line, no numbering, no explanation.\n"
+        "Make queries specific to Indian sources, include years and proper nouns.\n"
+        f"Claim: {claim}"
+    )
+    response = llm.invoke(prompt)
+    text = _safe_model_text(response)
+    queries = [q.strip() for q in text.strip().split("\n") if q.strip()]
+    return queries[:3] if queries else [claim]
+
+
 def _fallback_score_claim(claim: str, evidence_for_claim: list[dict], critiques: list[str]) -> dict:
     source_blobs: list[str] = [claim, " ".join(critiques)]
 
@@ -189,28 +203,48 @@ def diver(state: AgentState) -> AgentState:
 
     def _process_claim(claim):
         try:
-            results, method = hybrid_search(claim)
+            llm = get_llm_with_retry()
+            queries = _expand_claim_to_queries(claim, llm)
+
+            merged_results: list[dict] = []
+            seen_urls: set[str] = set()
+            query_methods: set[str] = set()
+
+            for query in queries:
+                results, method = hybrid_search(query)
+                if method:
+                    query_methods.add(method)
+
+                for result in results:
+                    url = str(result.get("url", "")).strip()
+                    if url:
+                        if url in seen_urls:
+                            continue
+                        seen_urls.add(url)
+                    merged_results.append(result)
+
             return {
                 "claim": claim,
-                "sources": results,
-                "evidence": [r.get("text", "") for r in results],
-            }, method
+                "search_queries": queries,
+                "sources": merged_results,
+                "evidence": [r.get("text", "") for r in merged_results],
+            }, query_methods
         except Exception as exc:
             LOGGER.exception(
                 "Diver hybrid_search failed for claim '%s': %s", claim, exc
             )
-            return None, None
+            return None, set()
 
     with ThreadPoolExecutor(max_workers=min(10, len(claims))) as executor:
         futures = {executor.submit(_process_claim, claim): claim for claim in claims}
         for future in as_completed(futures):
-            log_item, method = future.result()
+            log_item, claim_methods = future.result()
             if log_item:
                 logs.append(log_item)
-                methods.add(method)
+            methods.update(claim_methods)
 
     state["research_logs"] = logs
-    if len(methods) > 1:
+    if "hybrid" in methods or len(methods) > 1:
         state["retrieval_method"] = "hybrid"
     elif len(methods) == 1:
         retrieval_method = next(iter(methods))

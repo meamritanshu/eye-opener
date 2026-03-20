@@ -15,11 +15,36 @@ import config
 
 SOURCES = [
     # Fact-checking sites
-    {"name": "AltNews", "url": "https://www.altnews.in/", "selector": "article", "category": "fact_check"},
-    {"name": "Factly", "url": "https://factly.in/category/fact-check/", "selector": "article", "category": "fact_check"},
+    {
+        "name": "AltNews",
+        "url": "https://www.altnews.in/",
+        "pages": [
+            "https://www.altnews.in/",
+            "https://www.altnews.in/category/politics/",
+            "https://www.altnews.in/category/india/",
+            "https://www.altnews.in/page/2/",
+            "https://www.altnews.in/page/3/",
+        ],
+        "selector": "article",
+        "category": "fact_check",
+    },
+    
+    {
+        "name": "Factly",
+        "url": "https://factly.in/category/fact-check/",
+        "pages": [
+            "https://factly.in/category/fact-check/",
+            "https://factly.in/category/political-fact-check/",
+            "https://factly.in/page/2/",
+            "https://factly.in/page/3/",
+        ],
+        "selector": "article",
+        "category": "fact_check",
+    },
     {
         "name": "BoomLive",
         "url": "https://www.boomlive.in/fact-check",
+        "pages": ["https://www.boomlive.in/fact-check"],
         "selector": "a[href*='/fact-check/']",
         "fallback_selector": None,
         "category": "fact_check",
@@ -27,6 +52,7 @@ SOURCES = [
     {
         "name": "VishvasNews",
         "url": "https://www.vishvasnews.com/",
+        "pages": ["https://www.vishvasnews.com/"],
         "selector": "a[href*='vishvasnews.com']",
         "fallback_selector": "h2 a",
         "category": "fact_check",
@@ -35,6 +61,7 @@ SOURCES = [
     {
         "name": "ScrollIn",
         "url": "https://scroll.in/latest",
+        "pages": ["https://scroll.in/latest"],
         "selector": "a[href*='/article/']",
         "fallback_selector": None,
         "category": "journalism",
@@ -42,14 +69,16 @@ SOURCES = [
     {
         "name": "TheWire",
         "url": "https://thewire.in/politics",
-        "selector": "article.card-content",
+        "pages": ["https://thewire.in/politics"],
+        "selector": "article",
         "category": "journalism",
-        "skip": True,
-        "skip_reason": "heavily scripted, selector verification failed",
+        "fetch_mode": "playwright",
+        "skip": False,
     },
     {
         "name": "ThePrint",
         "url": "https://theprint.in/politics/",
+        "pages": ["https://theprint.in/politics/"],
         "selector": "h3.entry-title a",
         "fallback_selector": "div.td_module_wrap",
         "category": "journalism",
@@ -57,14 +86,16 @@ SOURCES = [
     {
         "name": "Newslaundry",
         "url": "https://www.newslaundry.com/politics",
+        "pages": ["https://www.newslaundry.com/politics"],
         "selector": "article",
         "category": "journalism",
-        "skip": True,
-        "skip_reason": "likely blocked or paywalled",
+        "fetch_mode": "playwright",
+        "skip": False,
     },
     {
         "name": "TheQuint",
         "url": "https://www.thequint.com/news/politics",
+        "pages": ["https://www.thequint.com/news/politics"],
         "selector": "a[href*='/news/']",
         "fallback_selector": None,
         "category": "journalism",
@@ -73,15 +104,23 @@ SOURCES = [
     {
         "name": "PIB",
         "url": "https://pib.gov.in/allRel.aspx",
+        "pages": ["https://pib.gov.in/allRel.aspx"],
         "selector": "div.content-area",
         "category": "government",
-        "skip": True,
-        "skip_reason": "403 Forbidden, needs authenticated session",
+        "fetch_mode": "playwright",
+        "skip": False,
     },
-    {"name": "MyGov", "url": "https://www.mygov.in/", "selector": "div.views-row", "category": "government"},
+    {
+        "name": "MyGov",
+        "url": "https://www.mygov.in/",
+        "pages": ["https://www.mygov.in/"],
+        "selector": "div.views-row",
+        "category": "government",
+    },
     {
         "name": "DataGovIn",
         "url": "https://data.gov.in/",
+        "pages": ["https://data.gov.in/"],
         "selector": "div.views-row",
         "category": "government",
         "skip": True,
@@ -90,6 +129,7 @@ SOURCES = [
     {
         "name": "PRSIndia",
         "url": "https://prsindia.org/bills",
+        "pages": ["https://prsindia.org/bills"],
         "selector": "a[href*='bill']",
         "fallback_selector": None,
         "category": "parliament",
@@ -99,14 +139,16 @@ SOURCES = [
     {
         "name": "SansadIn",
         "url": "https://sansad.in/ls/questions",
-        "selector": "div.question-content",
+        "pages": ["https://sansad.in/ls/questions"],
+        "selector": "div.questions-listing",
         "category": "parliament",
-        "skip": True,
-        "skip_reason": "heavily scripted, no static content",
+        "fetch_mode": "playwright",
+        "skip": False,
     },
     {
         "name": "ECIGovIn",
         "url": "https://www.eci.gov.in/",
+        "pages": ["https://www.eci.gov.in/"],
         "selector": "div.content-area",
         "category": "government",
         "skip": True,
@@ -116,6 +158,12 @@ SOURCES = [
     {
         "name": "IndianKanoon",
         "url": "https://indiankanoon.org/search/?formInput=constitution+india&pagenum=1",
+        "pages": [
+            "https://indiankanoon.org/search/?formInput=electoral+bonds&pagenum=1",
+            "https://indiankanoon.org/search/?formInput=supreme+court+india+2024&pagenum=1",
+            "https://indiankanoon.org/search/?formInput=fundamental+rights&pagenum=1",
+            "https://indiankanoon.org/search/?formInput=parliament+act&pagenum=1",
+        ],
         "selector": "a[href*='/doc/']",
         "fallback_selector": None,
         "category": "legal",
@@ -123,15 +171,20 @@ SOURCES = [
     {
         "name": "SupremeCourt",
         "url": "https://www.sci.gov.in/judgements",
-        "selector": "div.judgment-content",
+        "pages": ["https://www.sci.gov.in/judgements"],
+        "selector": "div.judgements",
         "category": "legal",
-        "skip": True,
-        "skip_reason": "no reliable selector found",
+        "fetch_mode": "playwright",
+        "skip": False,
     },
     # Economic and statistical
     {
         "name": "RBI",
         "url": "https://www.rbi.org.in/Scripts/BS_PressReleaseDisplay.aspx",
+        "pages": [
+            "https://www.rbi.org.in/Scripts/BS_PressReleaseDisplay.aspx",
+            "https://www.rbi.org.in/Scripts/AnnualReportPublications.aspx",
+        ],
         "selector": "a[href*='PressRelease']",
         "fallback_selector": "table",
         "category": "economic",
@@ -139,19 +192,42 @@ SOURCES = [
     {
         "name": "MoSPI",
         "url": "https://mospi.gov.in/web/mospi/home",
-        "selector": "main",
+        "pages": ["https://mospi.gov.in/web/mospi/home"],
+        "selector": "div.news-section",
         "fallback_selector": None,
         "category": "economic",
-        "skip": True,
-        "skip_reason": "content requires JS rendering, static fetch returns empty",
+        "fetch_mode": "playwright",
+        "skip": False,
     },
     {
         "name": "NITIAayog",
         "url": "https://www.niti.gov.in/",
-        "selector": "div.views-row",
+        "pages": ["https://www.niti.gov.in/"],
+        "selector": "div.view-content",
         "category": "economic",
-        "skip": True,
-        "skip_reason": "no reliable selector found",
+        "fetch_mode": "playwright",
+        "skip": False,
+    },
+    {
+        "name": "Wikipedia_India",
+        "url": "https://en.wikipedia.org/wiki/Politics_of_India",
+        "selector": "div.mw-parser-output p",
+        "category": "reference",
+        "fetch_mode": "static",
+    },
+    {
+        "name": "Wikipedia_SC",
+        "url": "https://en.wikipedia.org/wiki/Supreme_Court_of_India",
+        "selector": "div.mw-parser-output p",
+        "category": "legal",
+        "fetch_mode": "static",
+    },
+    {
+        "name": "Wikipedia_Econ",
+        "url": "https://en.wikipedia.org/wiki/Economy_of_India",
+        "selector": "div.mw-parser-output p",
+        "category": "economic",
+        "fetch_mode": "static",
     },
 ]
 
@@ -200,6 +276,23 @@ def _fetch_source(url: str) -> str:
     return response.text
 
 
+def _fetch_with_playwright(url: str, selector: str) -> str:
+    from playwright.sync_api import sync_playwright
+
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True)
+        page = browser.new_page()
+        page.set_extra_http_headers({"User-Agent": USER_AGENT})
+        page.goto(url, timeout=30000, wait_until="networkidle")
+        page.wait_for_timeout(2000)
+        elements = page.query_selector_all(selector)
+        text = "\n".join(
+            [el.inner_text() for el in elements if el.inner_text().strip()]
+        )
+        browser.close()
+        return text
+
+
 def _build_ids(source_name: str, source_url: str, chunks: Iterable[str]) -> list[str]:
     ids: list[str] = []
     for index, chunk in enumerate(chunks):
@@ -231,44 +324,49 @@ def index_all_sources() -> None:
             print(f"[SKIP] {name}: {source.get('skip_reason', 'source marked to skip')}")
             continue
 
-        url = source["url"]
+        pages = source.get("pages", [source["url"]])
         selector = source["selector"]
         fallback_selector = source.get("fallback_selector")
+        fetch_mode = source.get("fetch_mode", "static")
 
-        print(f"[INDEX] Fetching {name}: {url}")
-        try:
-            html = _fetch_source(url)
-            extracted = _extract_source_text(html, selector, fallback_selector)
-            chunks = _chunk_text(extracted)
+        for page_url in pages:
+            print(f"[INDEX] Fetching {name}: {page_url}")
+            try:
+                if fetch_mode == "playwright":
+                    extracted = _fetch_with_playwright(page_url, selector)
+                else:
+                    html = _fetch_source(page_url)
+                    extracted = _extract_source_text(html, selector, fallback_selector)
+                chunks = _chunk_text(extracted)
 
-            if not chunks:
-                print(f"[SKIP] {name}: no extractable content for selector '{selector}'")
-            else:
-                embeddings = embedder.embed_documents(chunks)
-                ids = _build_ids(name, url, chunks)
-                metadatas = [
-                    {
-                        "source_name": name,
-                        "url": url,
-                        "scraped_at": scraped_at,
-                        "chunk_index": i,
-                        "category": source.get("category", "general"),
-                    }
-                    for i, _ in enumerate(chunks)
-                ]
+                if not chunks:
+                    print(f"[SKIP] {name}: no extractable content for selector '{selector}'")
+                else:
+                    embeddings = embedder.embed_documents(chunks)
+                    ids = _build_ids(name, page_url, chunks)
+                    metadatas = [
+                        {
+                            "source_name": name,
+                            "url": page_url,
+                            "scraped_at": scraped_at,
+                            "chunk_index": i,
+                            "category": source.get("category", "general"),
+                        }
+                        for i, _ in enumerate(chunks)
+                    ]
 
-                collection.upsert(
-                    ids=ids,
-                    documents=chunks,
-                    embeddings=embeddings,
-                    metadatas=metadatas,
-                )
+                    collection.upsert(
+                        ids=ids,
+                        documents=chunks,
+                        embeddings=embeddings,
+                        metadatas=metadatas,
+                    )
 
-                print(f"[DONE] {name}: indexed {len(chunks)} chunks")
-        except Exception as exc:
-            print(f"[ERROR] {name}: {exc}")
+                    print(f"[DONE] {name}: indexed {len(chunks)} chunks from {page_url}")
+            except Exception as exc:
+                print(f"[ERROR] {name}: {exc}")
 
-        time.sleep(2)
+            time.sleep(2)
 
     print("Index build complete.")
 

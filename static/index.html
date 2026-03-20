@@ -15,27 +15,32 @@
     <div class="bg-orb orb-a" aria-hidden="true"></div>
     <div class="bg-orb orb-b" aria-hidden="true"></div>
 
+    <div class="app-shell">
+
     <header class="site-header">
       <div class="brand-wrap">
         <p class="eyebrow">Truth Analysis Workspace</p>
         <h1>The Eye Opener</h1>
       </div>
-      <div class="header-actions">
-        <p class="status-pill" aria-live="polite">System ready</p>
-        <button id="settings-btn" class="settings-btn" aria-label="Open settings" title="Settings">
+      <nav class="header-actions" aria-label="Site navigation">
+        <p class="status-pill" role="status" aria-live="polite">System ready</p>
+        <button id="settings-btn" class="settings-btn" aria-label="Open settings" aria-expanded="false" title="Settings">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <circle cx="12" cy="12" r="3"/>
             <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
           </svg>
         </button>
-      </div>
+      </nav>
     </header>
 
     <!-- ── Settings Modal ───────────────────────────────────────── -->
     <div id="settings-overlay" class="settings-overlay" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="settings-title">
       <div class="settings-drawer">
         <div class="settings-header">
-          <h2 id="settings-title">Settings</h2>
+          <div class="settings-title-group">
+            <h2 id="settings-title">Settings</h2>
+            <span class="dirty-dot" id="settings-dirty-dot" aria-hidden="true" hidden></span>
+          </div>
           <button id="settings-close" class="settings-close" aria-label="Close settings">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
@@ -110,7 +115,7 @@
             <div class="provider-fields" data-for="cerebras">
               <div class="setting-row">
                 <label for="cerebras-key">API Key</label>
-                <input type="password" id="cerebras-key" name="CEREBRAS_API_KEY" placeholder="csk-…" autocomplete="off" />
+                <input type="password" id="cerebras-key" name="CEREBRAS_API_KEY" placeholder="csk-…" autocomplete="off" data-required="true" aria-label="Cerebras API Key (required)" />
               </div>
               <div class="setting-row">
                 <label for="cerebras-model">Model</label>
@@ -122,7 +127,7 @@
             <div class="provider-fields" data-for="groq">
               <div class="setting-row">
                 <label for="groq-key">API Key</label>
-                <input type="password" id="groq-key" name="GROQ_API_KEY" placeholder="gsk_…" autocomplete="off" />
+                <input type="password" id="groq-key" name="GROQ_API_KEY" placeholder="gsk_…" autocomplete="off" data-required="true" aria-label="Groq API Key (required)" />
               </div>
               <div class="setting-row">
                 <label for="groq-model">Model</label>
@@ -134,7 +139,7 @@
             <div class="provider-fields" data-for="github">
               <div class="setting-row">
                 <label for="github-token">GitHub Token</label>
-                <input type="password" id="github-token" name="GITHUB_TOKEN" placeholder="ghp_…" autocomplete="off" />
+                <input type="password" id="github-token" name="GITHUB_TOKEN" placeholder="ghp_…" autocomplete="off" data-required="true" aria-label="GitHub Token (required)" />
               </div>
               <div class="setting-row">
                 <label for="github-model">Quality Model</label>
@@ -156,34 +161,64 @@
 
         <div class="settings-footer">
           <p class="settings-hint" id="settings-hint"></p>
-          <button type="button" id="settings-save" class="btn-save">Save Settings</button>
+          <button type="button" id="settings-save" class="btn-save">
+            <span id="settings-save-icon" aria-hidden="true"></span>
+            <span id="settings-save-label">Save Settings</span>
+          </button>
         </div>
       </div>
     </div>
 
     <main class="layout">
-      <section class="panel input-panel" aria-labelledby="claim-label">
-        <label id="claim-label" for="claim-input">Paste a claim to inspect</label>
-        <textarea
-          id="claim-input"
-          name="claim"
-          rows="5"
-          placeholder="Example: The Indian government launched NEP 2020"
-        ></textarea>
-        <div class="action-row">
-          <button type="button" disabled>Analyze (JS pending)</button>
-          <small>Interactive behavior will be added in the next step.</small>
+      <section class="panel input-panel command-bar reveal-up" aria-labelledby="claim-label" aria-label="Claim Composer">
+        <div class="composer-header">
+          <label id="claim-label" for="claim-input">Paste a claim to inspect</label>
+          <span class="char-counter" id="char-counter" aria-live="polite">0 / 2000</span>
+        </div>
+        <div class="composer-body">
+          <textarea
+            id="claim-input"
+            name="claim"
+            rows="4"
+            maxlength="2000"
+            placeholder="Example: Scientists discovered that regular exercise reduces the risk of heart disease by 30%"
+            aria-describedby="char-counter inline-error"
+          ></textarea>
+        </div>
+        <div class="composer-footer">
+          <div class="quick-actions">
+            <button type="button" id="sample-chip" class="btn-secondary btn-chip" title="Fill with a sample claim">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+              Sample claim
+            </button>
+            <button type="button" id="clear-btn" class="btn-secondary" title="Clear input" aria-label="Clear input">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              Clear
+            </button>
+          </div>
+          <div class="primary-actions">
+            <p id="inline-error" class="composer-error" role="alert" hidden></p>
+            <span class="shortcut-hint" aria-label="Keyboard shortcut">
+              <kbd>Ctrl</kbd><span>+</span><kbd>Enter</kbd>
+            </span>
+            <button type="button" id="analyze-btn" class="btn-analyze" aria-label="Analyze claim">
+              Analyze
+            </button>
+          </div>
         </div>
       </section>
 
-      <section class="panel stream-panel" aria-labelledby="stream-label">
-        <h2 id="stream-label">Pipeline Stream</h2>
+      <section class="panel stream-panel pipeline-theater reveal-up" aria-labelledby="stream-label" aria-label="Pipeline Theater">
+        <div class="theater-header">
+          <h2 id="stream-label">Pipeline</h2>
+          <div class="stage-meta" id="stage-meta" role="status" aria-live="polite">Waiting for input…</div>
+        </div>
         <div class="flow-container">
-          <div class="flow-orchestrator">
+          <div class="flow-orchestrator" aria-label="Pipeline stages">
             
             <!-- Tier 1: Claim -->
             <div class="flow-tier">
-              <div class="flow-node" id="node-claim">
+              <div class="flow-node" id="node-claim" data-state="idle" role="listitem" aria-label="Stage: Claim">
                 <div class="node-icon">01</div>
                 <div class="node-content">
                   <h4>Claim</h4>
@@ -193,12 +228,14 @@
               </div>
             </div>
 
-            <!-- Arrow Down -->
-            <div class="flow-edge-down">⬇</div>
+            <!-- Connector: Claim → Architect -->
+            <div class="flow-connector" aria-hidden="true" id="conn-to-architect">
+              <div class="connector-line"></div>
+            </div>
 
             <!-- Tier 2: Architect -->
             <div class="flow-tier">
-              <div class="flow-node node-architect" id="node-architect">
+              <div class="flow-node node-architect" id="node-architect" data-state="idle">
                 <div class="node-icon">02</div>
                 <div class="node-content">
                   <h4>Architect</h4>
@@ -208,15 +245,17 @@
               </div>
             </div>
 
-            <!-- Arrow Down to Workers -->
-            <div class="flow-edge-down">⬇</div>
+            <!-- Connector: Architect → Workers -->
+            <div class="flow-connector" aria-hidden="true" id="conn-to-workers">
+              <div class="connector-line"></div>
+            </div>
 
             <!-- Tier 3: Workers Wrap -->
-            <div class="flow-workers-tier">
+            <div class="flow-workers-tier" role="list" aria-label="Worker agents">
               
-              <div class="worker-wrapper">
-                <div class="flow-edge-two-way">↕</div>
-                <div class="flow-node" id="node-preprocessor">
+              <div class="worker-wrapper" role="listitem">
+                <div class="flow-connector worker-connector" aria-hidden="true" id="conn-preprocessor"><div class="connector-line"></div></div>
+                <div class="flow-node" id="node-preprocessor" data-state="idle" aria-label="Stage: Preprocessor">
                   <div class="node-icon">03</div>
                   <div class="node-content">
                     <h4>Preprocessor</h4>
@@ -226,9 +265,9 @@
                 </div>
               </div>
 
-              <div class="worker-wrapper">
-                <div class="flow-edge-two-way">↕</div>
-                <div class="flow-node" id="node-surgeon">
+              <div class="worker-wrapper" role="listitem">
+                <div class="flow-connector worker-connector" aria-hidden="true" id="conn-surgeon"><div class="connector-line"></div></div>
+                <div class="flow-node" id="node-surgeon" data-state="idle" aria-label="Stage: Surgeon">
                   <div class="node-icon">04</div>
                   <div class="node-content">
                     <h4>Surgeon</h4>
@@ -238,9 +277,9 @@
                 </div>
               </div>
 
-              <div class="worker-wrapper">
-                <div class="flow-edge-two-way">↕</div>
-                <div class="flow-node" id="node-diver">
+              <div class="worker-wrapper" role="listitem">
+                <div class="flow-connector worker-connector" aria-hidden="true" id="conn-diver"><div class="connector-line"></div></div>
+                <div class="flow-node" id="node-diver" data-state="idle" aria-label="Stage: Diver">
                   <div class="node-icon">05</div>
                   <div class="node-content">
                     <h4>Diver</h4>
@@ -250,9 +289,9 @@
                 </div>
               </div>
 
-              <div class="worker-wrapper">
-                <div class="flow-edge-two-way">↕</div>
-                <div class="flow-node" id="node-skeptic">
+              <div class="worker-wrapper" role="listitem">
+                <div class="flow-connector worker-connector" aria-hidden="true" id="conn-skeptic"><div class="connector-line"></div></div>
+                <div class="flow-node" id="node-skeptic" data-state="idle" aria-label="Stage: Skeptic">
                   <div class="node-icon">06</div>
                   <div class="node-content">
                     <h4>Skeptic</h4>
@@ -262,9 +301,9 @@
                 </div>
               </div>
 
-              <div class="worker-wrapper">
-                <div class="flow-edge-two-way">↕</div>
-                <div class="flow-node node-final" id="node-scorer">
+              <div class="worker-wrapper" role="listitem">
+                <div class="flow-connector worker-connector" aria-hidden="true" id="conn-scorer"><div class="connector-line"></div></div>
+                <div class="flow-node node-final" id="node-scorer" data-state="idle" aria-label="Stage: Scorer">
                   <div class="node-icon">07</div>
                   <div class="node-content">
                     <h4>Scorer</h4>
@@ -274,9 +313,9 @@
                 </div>
               </div>
 
-              <div class="worker-wrapper">
-                <div class="flow-edge-down error-edge">⬇</div>
-                <div class="flow-node node-error" id="node-error" hidden>
+              <div class="worker-wrapper" role="listitem">
+                <div class="flow-connector worker-connector error-connector" aria-hidden="true" id="conn-error"><div class="connector-line"></div></div>
+                <div class="flow-node node-error" id="node-error" data-state="idle" hidden aria-label="Stage: Error">
                   <div class="node-icon">!</div>
                   <div class="node-content">
                     <h4>Error</h4>
@@ -289,50 +328,102 @@
             </div>
           </div>
         </div>
-        <p class="hint status-hint">Waiting for input...</p>
 
         <!-- Live Agent Observer -->
-        <div class="live-output-container" id="live-output-container" hidden>
+        <div class="live-output-container observer-timeline" id="live-output-container" hidden>
           <div class="live-output-header">
             <span class="live-output-title">Agent Observer</span>
-            <span class="live-pulse" id="live-pulse"></span>
+            <div class="timeline-header-right">
+              <button type="button" id="timeline-clear" class="timeline-clear-btn" aria-label="Clear log">Clear</button>
+              <span class="live-pulse" id="live-pulse"></span>
+            </div>
           </div>
-          <div class="live-output-content" id="live-output-content">
+          <div class="live-output-content" id="live-output-content" role="log" aria-label="Agent observer log" aria-live="off">
             <div class="live-log-entry hint">Awaiting pipeline start...</div>
           </div>
         </div>
       </section>
 
-      <section class="panel result-panel" aria-labelledby="result-label">
-        <h2 id="result-label">Result Snapshot</h2>
-        <div class="result-grid">
-          <article>
-            <h3>Retrieval Method</h3>
-            <p>Not evaluated</p>
-          </article>
-          <article>
-            <h3>Truth Score</h3>
-            <p>--</p>
-          </article>
-          <article>
-            <h3>Final Verdict</h3>
-            <p>Pending</p>
-          </article>
+      <!-- ── Evidence Workspace ─────────────────────────────── -->
+      <div class="evidence-workspace" aria-label="Evidence Workspace">
+
+        <!-- Tab bar -->
+        <div class="tab-bar" role="tablist" aria-label="Evidence tabs">
+          <button role="tab" id="tab-verdict"     class="tab-btn" aria-selected="true"  aria-controls="tabpanel-verdict">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            Verdict
+          </button>
+          <button role="tab" id="tab-sources"     class="tab-btn" aria-selected="false" aria-controls="tabpanel-sources">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            <span id="tab-sources-label">Sources</span>
+          </button>
+          <button role="tab" id="tab-explanation" class="tab-btn" aria-selected="false" aria-controls="tabpanel-explanation">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            Explanation
+          </button>
+          <button role="tab" id="tab-raw"         class="tab-btn" aria-selected="false" aria-controls="tabpanel-raw">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            Raw Stream
+          </button>
         </div>
-      </section>
 
-      <section class="panel sources-panel" id="sources-panel" aria-labelledby="sources-label" hidden>
-        <h2 id="sources-label">📰 Sources Used</h2>
-        <p class="hint sources-hint">Sources retrieved to verify the claim.</p>
-        <ul class="sources-list" id="sources-list"></ul>
-      </section>
+        <!-- Verdict tab panel -->
+        <div id="tabpanel-verdict" role="tabpanel" aria-labelledby="tab-verdict" class="tab-panel">
+          <section class="panel result-panel" id="result-panel" aria-labelledby="result-label">
+            <h2 id="result-label" class="sr-only">Result Snapshot</h2>
+            <div class="result-grid">
+              <article class="metric-card">
+                <h3>Retrieval Method</h3>
+                <p>Not evaluated</p>
+              </article>
+              <article class="metric-card metric-score">
+                <h3>Truth Score</h3>
+                <p class="score-value">--</p>
+              </article>
+              <article class="metric-card metric-verdict">
+                <h3>Final Verdict</h3>
+                <p>Pending</p>
+              </article>
+            </div>
+          </section>
+        </div>
 
-      <section class="panel explanation-panel" id="explanation-panel" aria-labelledby="explanation-label" hidden>
-        <h2 id="explanation-label">🧮 Score Explanation</h2>
-        <p class="hint">Here's how the truth score was calculated for each claim:</p>
-        <div class="explanation-list" id="explanation-list"></div>
-      </section>
+        <!-- Sources tab panel -->
+        <div id="tabpanel-sources" role="tabpanel" aria-labelledby="tab-sources" class="tab-panel" hidden>
+          <section class="panel sources-panel" id="sources-panel" aria-labelledby="sources-label">
+            <h2 id="sources-label">Sources Used</h2>
+            <p class="hint sources-hint">Sources retrieved to verify the claim.</p>
+            <ul class="sources-list" id="sources-list"></ul>
+          </section>
+        </div>
+
+        <!-- Explanation tab panel -->
+        <div id="tabpanel-explanation" role="tabpanel" aria-labelledby="tab-explanation" class="tab-panel" hidden>
+          <section class="panel explanation-panel" id="explanation-panel" aria-labelledby="explanation-label">
+            <h2 id="explanation-label">Score Explanation</h2>
+            <p class="hint">How the truth score was calculated for each extracted claim:</p>
+            <div class="explanation-list" id="explanation-list"></div>
+          </section>
+        </div>
+
+        <!-- Raw Stream tab panel -->
+        <div id="tabpanel-raw" role="tabpanel" aria-labelledby="tab-raw" class="tab-panel" hidden>
+          <div class="panel raw-stream-panel">
+            <div class="raw-stream-header">
+              <h2>Raw Stream</h2>
+              <p class="hint">Full event log captured during the pipeline run.</p>
+            </div>
+            <div class="raw-stream-content" id="raw-stream-content" role="log" aria-label="Raw pipeline event log" aria-live="off">
+              <div class="raw-entry hint">Run an analysis to see the raw stream here.</div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /evidence-workspace -->
     </main>
+
+    </div><!-- /app-shell -->
+
 
     <script src="/static/js/main.js"></script>
     <script src="/static/js/settings.js"></script>

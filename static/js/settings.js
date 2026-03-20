@@ -4,7 +4,10 @@
   const openBtn     = document.getElementById('settings-btn');
   const closeBtn    = document.getElementById('settings-close');
   const saveBtn     = document.getElementById('settings-save');
+  const saveLabel   = document.getElementById('settings-save-label');
+  const saveIcon    = document.getElementById('settings-save-icon');
   const hint        = document.getElementById('settings-hint');
+  const dirtyDot    = document.getElementById('settings-dirty-dot');
   const portEl      = document.getElementById('flask-port');
 
   const themeLight  = document.getElementById('theme-light');
@@ -26,11 +29,10 @@
     if (themeDark)  themeDark.setAttribute('aria-pressed',  theme === 'dark'  ? 'true' : 'false');
   }
 
-  // Sync buttons with pre-applied theme (set before paint in <head>)
   applyTheme(document.documentElement.dataset.theme || 'light');
 
-  themeLight?.addEventListener('click', () => applyTheme('light'));
-  themeDark?.addEventListener('click',  () => applyTheme('dark'));
+  themeLight?.addEventListener('click', () => { applyTheme('light'); markDirty(); });
+  themeDark?.addEventListener('click',  () => { applyTheme('dark');  markDirty(); });
 
   // ── Provider field visibility ─────────────────────────────
   function showProviderFields(provider) {
@@ -46,10 +48,9 @@
   providerRadios.forEach(radio => {
     radio.addEventListener('change', () => {
       showProviderFields(radio.value);
-      // Auto-fetch Ollama models when switching to Ollama
-      if (radio.value === 'ollama') {
-        fetchOllamaModels();
-      }
+      clearAllValidation();
+      markDirty();
+      if (radio.value === 'ollama') fetchOllamaModels();
     });
   });
 
@@ -64,7 +65,6 @@
       const res = await fetch('/api/ollama-models');
       const data = await res.json();
 
-      // Clear existing options
       ollamaModelSelect.innerHTML = '';
 
       if (!res.ok || data.status === 'error') {
@@ -91,18 +91,15 @@
         ollamaModelSelect.appendChild(opt);
       });
 
-      // Select the current model if it's in the list
       if (currentModel && models.includes(currentModel)) {
         ollamaModelSelect.value = currentModel;
       } else if (currentModel) {
-        // Current model not in list — add it as a special option
         const opt = document.createElement('option');
         opt.value = currentModel;
         opt.textContent = `${currentModel} (configured)`;
         ollamaModelSelect.insertBefore(opt, ollamaModelSelect.firstChild);
         ollamaModelSelect.value = currentModel;
       }
-
     } catch (err) {
       ollamaModelSelect.innerHTML = '';
       const opt = document.createElement('option');
@@ -125,7 +122,7 @@
     if (settings.CEREBRAS_API_KEY) return 'cerebras';
     if (settings.GROQ_API_KEY)     return 'groq';
     if (settings.GITHUB_TOKEN)     return 'github';
-    return 'ollama'; // default
+    return 'ollama';
   }
 
   // ── Load settings from API ────────────────────────────────
@@ -136,7 +133,6 @@
       const data = await res.json();
       const s = data.settings || {};
 
-      // Populate individual fields
       setValue('ollama-url',      s.OLLAMA_BASE_URL);
       setValue('cerebras-key',    s.CEREBRAS_API_KEY);
       setValue('cerebras-model',  s.CEREBRAS_MODEL);
@@ -146,27 +142,23 @@
       setValue('github-model',    s.GITHUB_QUALITY_MODEL);
       if (portEl) portEl.textContent = s.FLASK_PORT || '5000';
 
-      // Select correct provider radio
       const provider = detectProvider(s);
-      providerRadios.forEach(r => {
-        r.checked = r.value === provider;
-      });
+      providerRadios.forEach(r => { r.checked = r.value === provider; });
       showProviderFields(provider);
 
-      // Fetch Ollama models and select the current one
       if (provider === 'ollama') {
         fetchOllamaModels(s.OLLAMA_MODEL);
-      } else {
-        // Still set a placeholder with the current configured model
-        if (ollamaModelSelect && s.OLLAMA_MODEL) {
-          ollamaModelSelect.innerHTML = '';
-          const opt = document.createElement('option');
-          opt.value = s.OLLAMA_MODEL;
-          opt.textContent = s.OLLAMA_MODEL;
-          ollamaModelSelect.appendChild(opt);
-          ollamaModelSelect.value = s.OLLAMA_MODEL;
-        }
+      } else if (ollamaModelSelect && s.OLLAMA_MODEL) {
+        ollamaModelSelect.innerHTML = '';
+        const opt = document.createElement('option');
+        opt.value = s.OLLAMA_MODEL;
+        opt.textContent = s.OLLAMA_MODEL;
+        ollamaModelSelect.appendChild(opt);
+        ollamaModelSelect.value = s.OLLAMA_MODEL;
       }
+
+      // After load, capture baseline and mark clean
+      markClean();
     } catch (err) {
       setHint(`Could not load settings: ${err.message}`, 'error');
     }
@@ -179,14 +171,115 @@
     }
   }
 
+  // ── Dirty-state tracking ──────────────────────────────────
+  let isDirty = false;
+  let successTimer = null;
+
+  function markDirty() {
+    if (isDirty) return;
+    isDirty = true;
+    if (dirtyDot) dirtyDot.hidden = false;
+    if (saveLabel) saveLabel.textContent = 'Save Changes';
+    setSaveState('idle');
+  }
+
+  function markClean() {
+    isDirty = false;
+    if (dirtyDot) dirtyDot.hidden = true;
+  }
+
+  // Watch all text/password inputs in settings for changes
+  document.querySelectorAll('.settings-body input[type="text"], .settings-body input[type="password"], .settings-body input[type="url"], .settings-body select').forEach(el => {
+    el.addEventListener('input', markDirty);
+    el.addEventListener('change', markDirty);
+    // Clear invalid on input
+    el.addEventListener('input', () => clearFieldError(el));
+  });
+
+  // ── Save state machine ────────────────────────────────────
+  // States: 'idle' | 'saving' | 'success' | 'error'
+  function setSaveState(state) {
+    if (!saveBtn || !saveLabel) return;
+    clearTimeout(successTimer);
+    saveBtn.classList.remove('is-saving', 'is-success', 'is-error');
+    saveBtn.disabled = false;
+
+    switch (state) {
+      case 'saving':
+        saveBtn.classList.add('is-saving');
+        saveBtn.disabled = true;
+        if (saveIcon) saveIcon.textContent = '';
+        if (saveLabel) saveLabel.textContent = 'Saving…';
+        break;
+      case 'success':
+        saveBtn.classList.add('is-success');
+        if (saveIcon) saveIcon.textContent = '✓';
+        if (saveLabel) saveLabel.textContent = 'Saved';
+        successTimer = setTimeout(() => setSaveState('idle'), 2500);
+        break;
+      case 'error':
+        saveBtn.classList.add('is-error');
+        if (saveIcon) saveIcon.textContent = '✗';
+        if (saveLabel) saveLabel.textContent = 'Failed';
+        break;
+      default: // idle
+        if (saveIcon) saveIcon.textContent = '';
+        if (saveLabel) saveLabel.textContent = isDirty ? 'Save Changes' : 'Save Settings';
+        break;
+    }
+  }
+
+  // ── Inline validation ─────────────────────────────────────
+  const REQUIRED_FIELDS = {
+    cerebras: ['cerebras-key'],
+    groq:     ['groq-key'],
+    github:   ['github-token'],
+    ollama:   [], // no required API key for local
+  };
+
+  function validateForProvider(provider) {
+    const required = REQUIRED_FIELDS[provider] || [];
+    let valid = true;
+    required.forEach(id => {
+      const el = document.getElementById(id);
+      if (el && el.value.trim() === '') {
+        setFieldError(el, 'This field is required to use this provider.');
+        valid = false;
+      }
+    });
+    return valid;
+  }
+
+  function setFieldError(el, message) {
+    el.classList.add('invalid');
+    // Remove existing error
+    const existing = el.parentElement.querySelector('.field-error');
+    if (existing) existing.remove();
+    const err = document.createElement('span');
+    err.className = 'field-error';
+    err.textContent = message;
+    el.parentElement.appendChild(err);
+  }
+
+  function clearFieldError(el) {
+    el.classList.remove('invalid');
+    const err = el.parentElement?.querySelector('.field-error');
+    if (err) err.remove();
+  }
+
+  function clearAllValidation() {
+    document.querySelectorAll('.settings-body input.invalid').forEach(el => clearFieldError(el));
+  }
+
   // ── Open / Close ──────────────────────────────────────────
   function openSettings() {
     overlay.classList.add('open');
     overlay.setAttribute('aria-hidden', 'false');
     openBtn.setAttribute('aria-expanded', 'true');
     clearHint();
+    clearAllValidation();
+    setSaveState('idle');
     loadSettings();
-    // Focus the close button for accessibility
     setTimeout(() => closeBtn?.focus(), 350);
   }
 
@@ -200,16 +293,12 @@
   openBtn.addEventListener('click', openSettings);
   closeBtn?.addEventListener('click', closeSettings);
 
-  // Close on overlay backdrop click
   overlay.addEventListener('click', (e) => {
     if (e.target === overlay) closeSettings();
   });
 
-  // Close on Escape
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && overlay.classList.contains('open')) {
-      closeSettings();
-    }
+    if (e.key === 'Escape' && overlay.classList.contains('open')) closeSettings();
   });
 
   // ── Hint helpers ──────────────────────────────────────────
@@ -227,15 +316,21 @@
 
   // ── Save settings via POST ────────────────────────────────
   saveBtn?.addEventListener('click', async () => {
-    saveBtn.disabled = true;
-    saveBtn.textContent = 'Saving…';
     clearHint();
+    clearAllValidation();
 
-    // Determine selected provider to set USE_LOCAL_LLM
     const selectedProvider = [...providerRadios].find(r => r.checked)?.value || 'ollama';
-    const useLocalLLM = selectedProvider === 'ollama' ? 'true' : 'false';
 
-    // Read Ollama model from the select dropdown
+    // Inline validation
+    if (!validateForProvider(selectedProvider)) {
+      setHint('Please fill in the required fields.', 'error');
+      setSaveState('error');
+      return;
+    }
+
+    setSaveState('saving');
+
+    const useLocalLLM = selectedProvider === 'ollama' ? 'true' : 'false';
     const ollamaModel = ollamaModelSelect?.value?.trim() || '';
 
     const payload = {
@@ -250,11 +345,9 @@
       GITHUB_QUALITY_MODEL: getVal('github-model'),
     };
 
-    // Strip empty values so we don't overwrite existing keys with blanks
     const filtered = Object.fromEntries(
       Object.entries(payload).filter(([, v]) => v.trim() !== '')
     );
-    // Always include USE_LOCAL_LLM
     filtered.USE_LOCAL_LLM = useLocalLLM;
 
     try {
@@ -267,12 +360,12 @@
       if (!res.ok || data.status === 'error') {
         throw new Error(data.error || `HTTP ${res.status}`);
       }
-      setHint('✓ Settings saved. LLM changes take effect on the next request.', 'success');
+      setHint('Settings saved. LLM changes take effect on the next request.', 'success');
+      setSaveState('success');
+      markClean();
     } catch (err) {
-      setHint(`✗ Failed to save: ${err.message}`, 'error');
-    } finally {
-      saveBtn.disabled = false;
-      saveBtn.textContent = 'Save Settings';
+      setHint(`Failed to save: ${err.message}`, 'error');
+      setSaveState('error');
     }
   });
 

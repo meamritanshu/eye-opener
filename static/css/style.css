@@ -1,5 +1,5 @@
 :root {
-  /* Light theme (default) */
+  /* ── Base palette ─────────────────────────────────────── */
   --bg: #f4efe5;
   --panel: rgba(255, 255, 255, 0.72);
   --panel-border: rgba(56, 46, 34, 0.12);
@@ -12,15 +12,60 @@
   --radius-md: 12px;
   --shadow: 0 14px 28px rgba(57, 44, 27, 0.12);
 
-  /* Settings drawer specific */
+  /* ── Settings drawer ──────────────────────────────────── */
   --drawer-bg: #ffffff;
   --drawer-border: rgba(56, 46, 34, 0.1);
   --input-bg: rgba(255, 255, 255, 0.9);
   --input-border: rgba(35, 28, 19, 0.2);
   --section-title-color: var(--accent);
 
-  /* Smooth theme transitions */
+  /* ── Smooth theme transitions ─────────────────────────── */
   --transition-theme: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+
+  /* ── Motion tokens ────────────────────────────────────── */
+  --dur-fast: 140ms;
+  --dur-base: 240ms;
+  --dur-slow: 360ms;
+  --ease-std: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-emp: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* ── Spacing scale ────────────────────────────────────── */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 32px;
+  --space-8: 48px;
+
+  /* ── Elevation tokens ─────────────────────────────────── */
+  --elev-1: 0 2px 6px rgba(57, 44, 27, 0.07);
+  --elev-2: 0 8px 20px rgba(57, 44, 27, 0.10);
+  --elev-3: 0 14px 28px rgba(57, 44, 27, 0.14);
+
+  /* ── Verdict color roles ──────────────────────────────── */
+  --color-true-bg:          #d4f5e5;
+  --color-true-text:        #1a6644;
+  --color-true-border:      #a3e8c5;
+  --color-false-bg:         #fde8e8;
+  --color-false-text:       #922222;
+  --color-false-border:     #f5b8b8;
+  --color-misleading-bg:    #fff3cd;
+  --color-misleading-text:  #7a5800;
+  --color-misleading-border:#f5d87a;
+  --color-unverif-bg:       #e8e8f0;
+  --color-unverif-text:     #555577;
+  --color-unverif-border:   #c8c8d8;
+  --color-error-bg:         #fff0f0;
+  --color-error-text:       var(--danger);
+  --color-error-border:     #ffb8b8;
+
+  /* ── Node state colors ────────────────────────────────── */
+  --state-idle-border:    rgba(0, 0, 0, 0.08);
+  --state-active-glow:    rgba(0, 122, 90, 0.25);
+  --state-complete-glow:  rgba(45, 212, 160, 0.20);
+  --state-error-glow:     rgba(170, 46, 46, 0.25);
 }
 
 /* ── Dark Theme ────────────────────────────────────────────── */
@@ -39,6 +84,34 @@
   --input-bg: rgba(255, 255, 255, 0.06);
   --input-border: rgba(255, 255, 255, 0.14);
   --section-title-color: var(--accent);
+
+  /* ── Dark elevation overrides ─────────────────────────── */
+  --elev-1: 0 2px 6px rgba(0, 0, 0, 0.25);
+  --elev-2: 0 8px 20px rgba(0, 0, 0, 0.35);
+  --elev-3: 0 14px 32px rgba(0, 0, 0, 0.50);
+
+  /* ── Dark verdict color roles ─────────────────────────── */
+  --color-true-bg:          rgba(26, 102, 68, 0.25);
+  --color-true-text:        #6ee7b7;
+  --color-true-border:      rgba(45, 212, 160, 0.30);
+  --color-false-bg:         rgba(248, 113, 113, 0.15);
+  --color-false-text:       #fca5a5;
+  --color-false-border:     rgba(248, 113, 113, 0.30);
+  --color-misleading-bg:    rgba(251, 191, 36, 0.15);
+  --color-misleading-text:  #fde68a;
+  --color-misleading-border:rgba(251, 191, 36, 0.30);
+  --color-unverif-bg:       rgba(148, 163, 184, 0.12);
+  --color-unverif-text:     #94a3b8;
+  --color-unverif-border:   rgba(148, 163, 184, 0.25);
+  --color-error-bg:         rgba(248, 113, 113, 0.12);
+  --color-error-text:       var(--danger);
+  --color-error-border:     rgba(248, 113, 113, 0.25);
+
+  /* ── Dark node state colors ───────────────────────────── */
+  --state-idle-border:    rgba(255, 255, 255, 0.10);
+  --state-active-glow:    rgba(45, 212, 160, 0.30);
+  --state-complete-glow:  rgba(45, 212, 160, 0.18);
+  --state-error-glow:     rgba(248, 113, 113, 0.30);
 }
 
 [data-theme="dark"] body {
@@ -671,10 +744,10 @@ small,
   text-transform: capitalize;
 }
 
-.verdict-true      { background: #d4f5e5; color: #1a6644; }
-.verdict-false     { background: #fde8e8; color: #922; }
-.verdict-misleading { background: #fff3cd; color: #7a5800; }
-.verdict-unverifiable { background: #e8e8f0; color: #555; }
+.verdict-true         { background: var(--color-true-bg);       color: var(--color-true-text);       border: 1px solid var(--color-true-border); }
+.verdict-false        { background: var(--color-false-bg);      color: var(--color-false-text);      border: 1px solid var(--color-false-border); }
+.verdict-misleading   { background: var(--color-misleading-bg); color: var(--color-misleading-text); border: 1px solid var(--color-misleading-border); }
+.verdict-unverifiable { background: var(--color-unverif-bg);   color: var(--color-unverif-text);    border: 1px solid var(--color-unverif-border); }
 
 .confidence-tag {
   font-size: 0.8rem;
@@ -1081,6 +1154,81 @@ input {
   transition: var(--transition-theme);
 }
 
+/* ── Component state utility classes ─────────────────────── */
+/* Applied via data-state attribute and/or CSS class on .flow-node */
+.flow-node[data-state="idle"],
+.state-idle {
+  opacity: 1;
+  filter: none;
+}
+
+.flow-node[data-state="active"],
+.state-active {
+  /* Node-specific active styles are applied per-node;
+     this base class establishes the hook for JS toggling */
+  z-index: 10;
+}
+
+.flow-node[data-state="complete"],
+.state-complete {
+  border-color: var(--color-true-border);
+  box-shadow: var(--elev-1), 0 0 0 2px var(--state-complete-glow);
+  opacity: 0.85;
+}
+
+.flow-node[data-state="error"],
+.state-error {
+  border-color: var(--color-error-border);
+  box-shadow: var(--elev-2), 0 0 0 3px var(--state-error-glow);
+}
+
+/* ── Reveal-up entrance animation ─────────────────────────── */
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.reveal-up {
+  animation: reveal-up var(--dur-slow) var(--ease-std) both;
+}
+
+/* Staggered panel reveal on page load */
+.app-shell .panel:nth-child(1) { animation-delay: 0ms; }
+.app-shell .panel:nth-child(2) { animation-delay: 40ms; }
+.app-shell .panel:nth-child(3) { animation-delay: 80ms; }
+.app-shell .panel:nth-child(4) { animation-delay: 120ms; }
+.app-shell .panel:nth-child(5) { animation-delay: 160ms; }
+
+/* ── Reduced-motion ───────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-delay: 0ms !important;
+    transition-duration: 1ms !important;
+  }
+}
+
+/* ── App Shell container ────────────────────────────────── */
+.app-shell {
+  /* Transparent pass-through wrapper that scopes panel animations */
+  width: 100%;
+}
+
+/* ── Evidence Workspace wrapper ─────────────────────────── */
+.evidence-workspace {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
 /* ── Model Select Row ───────────────────────────────────── */
 .model-select-row {
   display: flex;
@@ -1173,5 +1321,859 @@ input {
 
   .provider-grid {
     grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   PHASE 2 — Command Bar and Pipeline Theater
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── ClaimComposer layout ────────────────────────────────── */
+.composer-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.composer-header label {
+  margin-bottom: 0;
+  flex: 1;
+}
+
+.char-counter {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--muted);
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: color var(--dur-fast) var(--ease-std);
+}
+
+.char-counter.warn  { color: #c07a00; }
+.char-counter.limit { color: var(--danger); }
+
+.composer-body {
+  position: relative;
+}
+
+.composer-body textarea {
+  width: 100%;
+  border-radius: var(--radius-md);
+  border: 1.5px solid rgba(35, 28, 19, 0.2);
+  padding: 12px 14px;
+  resize: vertical;
+  min-height: 110px;
+  font: inherit;
+  background: rgba(255, 255, 255, 0.8);
+  transition: border-color var(--dur-base) var(--ease-std),
+              box-shadow var(--dur-base) var(--ease-std);
+  line-height: 1.55;
+}
+
+.composer-body textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+[data-theme="dark"] .composer-body textarea {
+  background: var(--input-bg);
+  color: var(--text);
+  border-color: var(--input-border);
+}
+
+.composer-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.quick-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.primary-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  flex: 1;
+}
+
+/* ── Secondary / ghost buttons ───────────────────────────── */
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1.5px solid var(--panel-border);
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.84rem;
+  font-weight: 600;
+  cursor: pointer;
+  opacity: 1;
+  transition: color var(--dur-fast) var(--ease-std),
+              border-color var(--dur-fast) var(--ease-std),
+              background var(--dur-fast) var(--ease-std);
+}
+
+.btn-secondary svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.btn-secondary:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.btn-chip {
+  border-radius: 999px;
+}
+
+/* ── Analyze button ──────────────────────────────────────── */
+.btn-analyze {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 22px;
+  border-radius: 999px;
+  border: none;
+  background: var(--accent);
+  color: #fff;
+  font: inherit;
+  font-size: 0.92rem;
+  font-weight: 700;
+  cursor: pointer;
+  opacity: 1;
+  transition: transform var(--dur-fast) var(--ease-emp),
+              box-shadow var(--dur-fast) var(--ease-std),
+              background var(--dur-base) var(--ease-std);
+  box-shadow: 0 4px 14px rgba(0, 122, 90, 0.28);
+  letter-spacing: 0.01em;
+}
+
+.btn-analyze:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(0, 122, 90, 0.38);
+}
+
+.btn-analyze:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(0, 122, 90, 0.22);
+}
+
+.btn-analyze:disabled {
+  background: var(--muted);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+  opacity: 0.55;
+}
+
+/* ── Shortcut hint ───────────────────────────────────────── */
+.shortcut-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.78rem;
+  color: var(--muted);
+  user-select: none;
+}
+
+.shortcut-hint kbd {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 5px;
+  border: 1px solid var(--panel-border);
+  background: var(--input-bg);
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 700;
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  color: var(--muted);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+}
+
+/* ── Inline composer error ───────────────────────────────── */
+.composer-error {
+  font-size: 0.84rem;
+  color: var(--danger);
+  font-weight: 600;
+  margin: 0;
+  order: -1;
+  width: 100%;
+}
+
+/* ── Theater header ──────────────────────────────────────── */
+.theater-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.theater-header h2 {
+  margin: 0;
+}
+
+.stage-meta {
+  font-size: 0.84rem;
+  color: var(--muted);
+  font-style: italic;
+  font-weight: 500;
+  min-height: 1.4em;
+  transition: color var(--dur-base) var(--ease-std);
+}
+
+.stage-meta.running { color: var(--accent); font-style: normal; font-weight: 700; }
+.stage-meta.done    { color: var(--accent); font-style: normal; }
+.stage-meta.error   { color: var(--danger); font-style: normal; font-weight: 700; }
+
+/* ── Flow connectors (replacing emoji arrows) ────────────── */
+.flow-connector {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  --connector-h: 28px;
+  height: var(--connector-h);
+  overflow: visible;
+  position: relative;
+  z-index: 1;
+}
+
+.worker-connector {
+  --connector-h: 22px;
+}
+
+.connector-line {
+  width: 2px;
+  height: 100%;
+  background: var(--panel-border);
+  border-radius: 2px;
+  transform-origin: top center;
+  transition: background var(--dur-base) var(--ease-std);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Animated fill overlay when connector is active */
+.connector-line::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--accent);
+  border-radius: inherit;
+  transform: scaleY(0);
+  transform-origin: top center;
+  transition: transform var(--dur-base) var(--ease-std);
+}
+
+.flow-connector.active .connector-line::after {
+  transform: scaleY(1);
+}
+
+.error-connector .connector-line {
+  background: rgba(170, 46, 46, 0.3);
+}
+
+/* Keep old rule selectors but nullify them safely */
+.flow-edge-down,
+.flow-edge-two-way {
+  display: none;
+}
+
+/* ── Node pulse glow ring on active ──────────────────────── */
+@keyframes node-pulse {
+  0%   { box-shadow: 0 0 0 0 var(--state-active-glow), var(--elev-2); }
+  50%  { box-shadow: 0 0 0 6px transparent, var(--elev-3); }
+  100% { box-shadow: 0 0 0 0 var(--state-active-glow), var(--elev-2); }
+}
+
+/* Override the base .active transition to use animation */
+.flow-node.active {
+  transform: translateY(-5px) scale(1.05);
+  border-width: 2.5px;
+  z-index: 10;
+  animation: node-pulse 1.8s var(--ease-std) infinite;
+}
+
+/* Ensure individual node colors still take precedence */
+#node-architect.active  { box-shadow: none; animation: node-pulse 1.8s var(--ease-std) infinite; }
+#node-preprocessor.active { box-shadow: none; animation: node-pulse 1.8s var(--ease-std) infinite; }
+#node-surgeon.active    { box-shadow: none; animation: node-pulse 1.8s var(--ease-std) infinite; }
+#node-diver.active      { box-shadow: none; animation: node-pulse 1.8s var(--ease-std) infinite; }
+#node-skeptic.active    { box-shadow: none; animation: node-pulse 1.8s var(--ease-std) infinite; }
+#node-scorer.active     { box-shadow: none; animation: node-pulse 1.8s var(--ease-std) infinite; }
+
+/* Stop animation when complete */
+.flow-node[data-state="complete"] {
+  animation: none;
+  transform: none;
+}
+
+/* ── Observer timeline upgrades ──────────────────────────── */
+.timeline-header-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.timeline-clear-btn {
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: transparent;
+  color: #71717a;
+  font: inherit;
+  font-size: 0.74rem;
+  font-weight: 600;
+  cursor: pointer;
+  opacity: 1;
+  letter-spacing: 0.04em;
+  transition: color var(--dur-fast) var(--ease-std),
+              border-color var(--dur-fast) var(--ease-std);
+}
+
+.timeline-clear-btn:hover {
+  color: #f4f4f5;
+  border-color: rgba(255,255,255,0.35);
+}
+
+/* ── Responsive Phase 2 ──────────────────────────────────── */
+@media (max-width: 640px) {
+  .composer-footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .primary-actions {
+    justify-content: space-between;
+  }
+
+  .btn-analyze {
+    flex: 1;
+    justify-content: center;
+  }
+
+  .theater-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   PHASE 3 — Evidence Workspace Tabs
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Screen-reader only utility ──────────────────────────── */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ── Evidence workspace with tabs ────────────────────────── */
+.evidence-workspace {
+  /* Override Phase 1 flex-column: tabs need a different flow */
+  display: block;
+  gap: 0;
+}
+
+/* ── Tab bar ─────────────────────────────────────────────── */
+.tab-bar {
+  display: flex;
+  gap: var(--space-1);
+  border-bottom: 2px solid var(--panel-border);
+  padding: 0;
+  margin-bottom: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.tab-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 18px;
+  background: transparent;
+  border: none;
+  border-bottom: 2.5px solid transparent;
+  margin-bottom: -2px; /* overlap the tab-bar border */
+  border-radius: 0;
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  opacity: 1;
+  white-space: nowrap;
+  transition: color var(--dur-fast) var(--ease-std),
+              border-color var(--dur-fast) var(--ease-std);
+}
+
+.tab-btn svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  opacity: 0.7;
+  transition: opacity var(--dur-fast) var(--ease-std);
+}
+
+.tab-btn:hover {
+  color: var(--text);
+}
+
+.tab-btn:hover svg {
+  opacity: 1;
+}
+
+.tab-btn[aria-selected="true"] {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+  font-weight: 700;
+}
+
+.tab-btn[aria-selected="true"] svg {
+  opacity: 1;
+}
+
+/* Count badge on Sources tab */
+.tab-badge {
+  display: inline-block;
+  font-size: 0.70rem;
+  font-weight: 700;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  margin-left: 2px;
+  line-height: 1.5;
+}
+
+/* Tab panels are visible by default unless [hidden] attribute is set */
+
+.tab-panel[hidden] {
+  display: none;
+}
+
+.tab-panel:not([hidden]) > * {
+  animation: reveal-up var(--dur-base) var(--ease-std) both;
+}
+
+/* Remove top border-radius on panels inside tabs so they
+   flush with the tab bar */
+.tab-panel .panel {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  border-top: none;
+}
+
+/* ── Metric cards upgrade ────────────────────────────────── */
+.metric-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--panel-border);
+  background: rgba(255, 255, 255, 0.74);
+  padding: 18px 20px;
+  box-shadow: var(--elev-1);
+  transition: box-shadow var(--dur-base) var(--ease-std),
+              border-color var(--dur-base) var(--ease-std);
+  position: relative;
+  overflow: hidden;
+}
+
+[data-theme="dark"] .metric-card {
+  background: rgba(40, 40, 50, 0.7);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.metric-card h3 {
+  margin: 0 0 var(--space-2);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.metric-card p {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+/* Accent left border for verdict card */
+.metric-verdict {
+  border-left: 4px solid var(--panel-border);
+  transition: border-left-color var(--dur-base) var(--ease-std);
+}
+
+.metric-verdict[data-verdict="true"]         { border-left-color: var(--color-true-text); }
+.metric-verdict[data-verdict="false"]        { border-left-color: var(--color-false-text); }
+.metric-verdict[data-verdict="misleading"]   { border-left-color: var(--color-misleading-text); }
+.metric-verdict[data-verdict="unverifiable"] { border-left-color: var(--color-unverif-text); }
+
+/* Score card: large number */
+.metric-score .score-value {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--accent);
+}
+
+/* ── Raw Stream panel ────────────────────────────────────── */
+.raw-stream-panel {
+  color: #e5e7eb;
+  background: rgba(22, 24, 28, 0.92);
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.88rem;
+}
+
+[data-theme="dark"] .raw-stream-panel {
+  background: rgba(15, 16, 20, 0.96);
+}
+
+.raw-stream-header {
+  padding: 14px 18px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 12px;
+}
+
+.raw-stream-header h2 {
+  margin: 0 0 4px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #a1a1aa;
+}
+
+.raw-stream-header .hint {
+  margin: 0;
+  font-size: 0.80rem;
+  color: #71717a;
+}
+
+.raw-stream-content {
+  padding: 14px 18px;
+  max-height: 380px;
+  overflow-y: auto;
+  min-height: 120px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+}
+
+.raw-stream-content::-webkit-scrollbar { width: 5px; }
+.raw-stream-content::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+}
+
+.raw-entry {
+  margin-bottom: 10px;
+  line-height: 1.5;
+  color: #d1d5db;
+  animation: fade-in-up 0.25s ease-out both;
+}
+
+.raw-entry.hint {
+  color: #71717a;
+  font-style: italic;
+}
+
+/* ── Responsive Phase 3 ──────────────────────────────────── */
+@media (max-width: 640px) {
+  .tab-btn {
+    padding: 10px 12px;
+    font-size: 0.82rem;
+    gap: 4px;
+  }
+
+  .tab-btn svg {
+    display: none;
+  }
+
+  .metric-score .score-value {
+    font-size: 1.6rem;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   PHASE 4 — Settings UX
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Settings title group (dirty dot) ───────────────────── */
+.settings-title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dirty-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+  animation: dot-pulse 2s ease-in-out infinite;
+}
+
+@keyframes dot-pulse {
+  0%, 100% { opacity: 1;   transform: scale(1);   }
+  50%       { opacity: 0.5; transform: scale(0.8); }
+}
+
+/* ── Save button state classes ───────────────────────────── */
+.btn-save {
+  transition: background var(--dur-base) var(--ease-std),
+              color var(--dur-base) var(--ease-std),
+              box-shadow var(--dur-fast) var(--ease-std);
+}
+
+.btn-save.is-saving {
+  background: var(--muted);
+  cursor: wait;
+  opacity: 0.75;
+}
+
+.btn-save.is-success {
+  background: var(--color-true-bg, #d4f5e9);
+  color: var(--color-true-text, #006b3f);
+  box-shadow: 0 0 0 3px var(--color-true-bg, #d4f5e9);
+}
+
+[data-theme="dark"] .btn-save.is-success {
+  background: rgba(0, 122, 90, 0.3);
+  color: #4ade80;
+  box-shadow: 0 0 0 3px rgba(0, 122, 90, 0.2);
+}
+
+.btn-save.is-error {
+  background: var(--color-false-bg, #fde8e8);
+  color: var(--color-false-text, #991b1b);
+  box-shadow: 0 0 0 3px var(--color-false-bg, #fde8e8);
+}
+
+[data-theme="dark"] .btn-save.is-error {
+  background: rgba(170, 46, 46, 0.3);
+  color: #f87171;
+  box-shadow: 0 0 0 3px rgba(170, 46, 46, 0.2);
+}
+
+/* ── Provider card selected ring ─────────────────────────── */
+.provider-card input[type="radio"]:checked ~ .provider-label {
+  box-shadow: 0 0 0 3px var(--accent-soft), var(--elev-1);
+}
+
+/* ── Input invalid state ─────────────────────────────────── */
+.setting-row input.invalid {
+  border-color: var(--danger);
+  background: rgba(170, 46, 46, 0.06);
+  box-shadow: 0 0 0 3px rgba(170, 46, 46, 0.12);
+  outline: none;
+}
+
+.field-error {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--danger);
+  font-weight: 600;
+  margin-top: 4px;
+  animation: reveal-up var(--dur-fast) var(--ease-std) both;
+}
+
+/* ── Settings hint ───────────────────────────────────────── */
+.settings-hint {
+  transition: color var(--dur-base) var(--ease-std);
+}
+
+.settings-hint.success { color: var(--accent); }
+.settings-hint.error   { color: var(--danger); }
+/* ═══════════════════════════════════════════════════════════
+   PHASE 5 — Accessibility, Mobile, and Polish
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Global focus-visible ring ───────────────────────────── */
+:focus-visible {
+  outline: 2.5px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Override only where we intentionally suppress (textarea uses
+   box-shadow focus already defined in Phase 2) */
+.composer-body textarea:focus-visible {
+  outline: none;
+}
+
+/* ── 44px touch targets on all interactive controls ─────── */
+.tab-btn,
+.btn-secondary,
+.btn-analyze,
+.btn-save,
+.theme-option,
+.settings-close,
+.btn-refresh,
+.timeline-clear-btn {
+  min-height: 44px;
+}
+
+.provider-card {
+  min-height: 44px;
+}
+
+/* ── 768px breakpoint (tablet / landscape phone) ────────── */
+@media (max-width: 768px) {
+  .layout {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .provider-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .flow-workers-tier {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .worker-wrapper {
+    flex: 0 1 calc(33.333% - 8px);
+    min-width: 120px;
+  }
+}
+
+/* ── 390px breakpoint (portrait phone) ──────────────────── */
+@media (max-width: 390px) {
+  /* Layout */
+  .layout {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 0 12px;
+  }
+
+  /* ClaimComposer */
+  .composer-body textarea {
+    min-height: 80px;
+  }
+
+  .composer-footer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-2);
+    position: sticky;
+    bottom: 0;
+    background: var(--panel-bg, rgba(255,248,240,0.95));
+    backdrop-filter: blur(8px);
+    padding: 10px 0 12px;
+    margin-top: var(--space-2);
+    z-index: 50;
+    border-top: 1px solid var(--panel-border);
+  }
+
+  [data-theme="dark"] .composer-footer {
+    background: rgba(28, 28, 36, 0.95);
+  }
+
+  .quick-actions {
+    justify-content: flex-start;
+  }
+
+  .primary-actions {
+    justify-content: space-between;
+  }
+
+  .btn-analyze {
+    flex: 1;
+    justify-content: center;
+  }
+
+  /* Theater */
+  .theater-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-1);
+  }
+
+  .flow-workers-tier {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .worker-wrapper {
+    flex: 0 1 calc(50% - 4px);
+    min-width: 100px;
+  }
+
+  .flow-node {
+    padding: 10px 12px;
+  }
+
+  .node-icon {
+    font-size: 0.78rem;
+    width: 28px;
+    height: 28px;
+  }
+
+  /* Observer */
+  .live-output-content {
+    max-height: 180px;
+  }
+
+  /* Evidence Workspace */
+  .tab-btn {
+    padding: 10px 10px;
+    font-size: 0.80rem;
+    gap: 3px;
+  }
+
+  .tab-btn svg {
+    display: none;
+  }
+
+  .metric-card {
+    padding: 14px 16px;
+  }
+
+  .metric-score .score-value {
+    font-size: 1.4rem;
+  }
+
+  /* Settings drawer */
+  .settings-drawer {
+    width: 100%;
+    border-radius: 16px 16px 0 0;
+  }
+
+  .provider-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
   }
 }
