@@ -1,0 +1,14 @@
+[phases.setup]
+nixPkgs = ['python311', 'chromium', 'playwright-driver']
+
+[phases.install]
+cmds = [
+    'pip install -r requirements.txt',
+    'playwright install chromium'
+]
+
+[phases.build]
+cmds = ['python -m services.indexer']
+
+[start]
+cmd = 'python app.py'

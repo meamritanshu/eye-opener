@@ -194,4 +194,10 @@ def save_settings() -> Response:
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=config.FLASK_PORT, debug=config.FLASK_ENV == "development", use_reloader=False)
+    port = int(os.environ.get("PORT", config.FLASK_PORT))
+    app.run(
+        host="0.0.0.0",
+        port=port,
+        debug=not config.IS_PRODUCTION,
+        use_reloader=False,
+    )

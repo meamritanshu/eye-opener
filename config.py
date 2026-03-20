@@ -21,6 +21,14 @@ FLASK_PORT = int(os.getenv("FLASK_PORT", "5000"))
 CHROMA_DB_PATH = os.getenv("CHROMA_DB_PATH", "./chroma_db")
 
 
+# Production mode detection
+IS_PRODUCTION = os.getenv("RAILWAY_ENVIRONMENT") is not None or FLASK_ENV == "production"
+
+# Force cloud LLM in production (no local Ollama on Railway)
+if IS_PRODUCTION:
+    USE_LOCAL_LLM = False
+
+
 def get_config_warnings() -> list[str]:
     warnings: list[str] = []
     if not (USE_LOCAL_LLM or CEREBRAS_API_KEY or GROQ_API_KEY or GITHUB_TOKEN):

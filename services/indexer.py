@@ -311,6 +311,10 @@ def _get_collection() -> chromadb.Collection:
 
 
 def index_all_sources() -> None:
+    import config
+
+    if hasattr(config, 'IS_PRODUCTION') and config.IS_PRODUCTION:
+        print('[INDEXER] Running in production mode - building fresh index...')
     print("Starting index build...")
     collection = _get_collection()
     embedder = _get_embedder()
